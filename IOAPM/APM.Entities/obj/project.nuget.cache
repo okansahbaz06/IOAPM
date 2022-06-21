@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "NiQbjKkRFPE4cJFZsyvelXyxd2RVAl1viORDeqhpADLr34USrwdE+GEtMEO6H8pRuX28Vj87D8k2qYvMAW9N9w==",
+  "success": true,
+  "projectFilePath": "D:\\APM_17.06.2022\\APM\\APM.Entities\\APM.Entities.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\okang\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.0.1\\microsoft.aspnetcore.app.ref.3.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

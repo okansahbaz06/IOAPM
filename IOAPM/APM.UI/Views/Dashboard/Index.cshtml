@@ -1,0 +1,222 @@
+﻿@model APM.Repository.Dto.EmployeeDto
+@{
+    ViewData["Title"] = "Profil Bilgileri";
+}
+
+    <div class="row" style="justify-content: center;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Hesap</h2><hr>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+            <div class="card">
+                <h5 class="card-header">Hesap Ayarları</h5>
+                <div class="card-body">
+                    <div class="pills-vertical">
+                        <div class="row">
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    <a class="nav-link active show" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true" style="border: solid;border-width: thin;">Genel</a>
+                                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false" style="border: solid;border-width: thin;">Profil Düzenle</a>
+                                    <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false" style="border: solid;border-width: thin;">Şifre Değiştir</a>
+                                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="modal" data-target="#logOffSure" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false" style="border: solid;border-width: thin;">Çıkış Yap</a>
+                                </div>
+                            </div>
+                            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12 ">
+                                <div class="tab-content" id="v-pills-tabContent" style="border: solid;border-width: thin; padding-left: 34px; padding-top: 10px;">
+                                    <div class="tab-pane fade active show" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                            <div style="padding-top:10px; padding-left: 33px;">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        Ad - Soyad
+                                                    </div>
+                                                    <div class="col">
+                                                        <p class="lead">@Model.NAME @Model.SURNAME</p>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="col">
+                                                    <div class="row">
+                                                        E-Mail
+                                                    </div>
+                                                    <div class="col">
+                                                        <p class="lead">@Model.MAIL</p>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="col">
+                                                    <div class="row">
+                                                        Ünvan
+                                                    </div>
+                                                    <div class="col">
+                                                        <p class="lead">@Model.TITLE.TITLE_NAME</p>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="col">
+                                                    <div class="row">
+                                                        Yetki
+                                                    </div>
+                                                    <div class="col">
+                                                        <p class="lead">@Model.ROLE</p>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="col">
+                                                    <div class="row">
+                                                        Tel No
+                                                    </div>
+                                                    <div class="col">
+                                                        <p class="lead">@Model.PHONE_NO</p>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="col">
+                                                    <div class="row">
+                                                        Adres
+                                                    </div>
+                                                    <div class="col">
+                                                        <p class="lead">@Model.ADRESS</p>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="col">
+                                                    <div class="row">
+                                                        Üye Durumu
+                                                    </div>
+                                                    <div class="col">
+                                                        @if (Model.STATUS == true)
+                                                        {
+                                                            <p class="lead">Aktif</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="lead">Pasif</p>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                            <form asp-action="EditMyInfo" method="post" role="form">
+                                                <div class="form-group row">
+                                                    <label for="NAME">Ad</label>
+                                                    <input id="NAME" type="text" name="NAME" data-parsley-trigger="change" value="@Model.NAME" required="" placeholder="Ad Giriniz" autocomplete="off" class="form-control">
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="SURNAME">Soyad</label>
+                                                    <input id="SURNAME" type="text" name="SURNAME" data-parsley-trigger="change" value="@Model.SURNAME" required="" placeholder="Soyad Giriniz" autocomplete="off" class="form-control">
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="EMAIL">E-Mail</label>
+                                                    <input type="EMAIL" name="EMAIL" required="" value="@Model.MAIL" data-parsley-type="email" placeholder="Mail Adresi Giriniz" class="form-control">
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="ADRESS">Adres</label>
+                                                    <textarea id="ADRESS" type="text" name="ADRESS" data-parsley-trigger="change" value="" required="" placeholder="Adres Giriniz" autocomplete="off" class="form-control">@Model.ADRESS</textarea>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="PHONE_NO">Tel No</label>
+                                                    <input id="phone-mask" im-insert="true" type="text" name="PHONE_NO" data-parsley-trigger="change" value="@Model.PHONE_NO" required="" placeholder="Telefon Numarası Giriniz" autocomplete="off" class="form-control phone-inputmask">
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="SURNAME">Kaydetmek için şifre giriniz </label>
+                                                    <input id="PASSWORD" type="password" name="PASSWORD" data-parsley-trigger="change" required="" placeholder="Şifre Giriniz" autocomplete="off" class="form-control">
+                                                </div>
+                                                <div class="form-group row">
+                                                    <button type="submit" class="btn btn-space btn-success">Kaydet</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                            <form asp-action="EditMyPassword" method="post" role="form" id="form2">
+                                                <div class="form-group row">
+                                                    <label for="SURNAME">Mevcut şifrenizi giriniz </label>
+                                                    <input id="PASSWORD" type="password" name="p1" data-parsley-trigger="change" required="" placeholder="Mevcut Şifre" autocomplete="off" class="form-control">
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="SURNAME">Yeni şifrenizi giriniz </label>
+                                                    <input id="password1" type="password" name="p2" data-parsley-trigger="change" required="" placeholder="Yeni Şifre" autocomplete="off" class="form-control changeControl">
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="SURNAME">Yeni şifrenizi onaylayınız </label>
+                                                    <input id="password2" type="password" name="p3" data-parsley-trigger="change" required="" placeholder="Şifre Tekrarı" autocomplete="off" class="form-control changeControl">
+                                                    <p class="text-danger" id="validate-status"></p>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <button id="passSave" type="submit" class="btn btn-space btn-success" disabled>Kaydet</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<div class="modal fade" id="logOffSure" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Çıkış Yap</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="Delete" method="post" role="form">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-group">
+                            Çıkış yapmak istediğinize emin misiniz ?
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-danger" asp-controller="Login" asp-action="Logoff">Çıkış Yap</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $(".changeControl").keyup(validate);
+        });
+
+        function validate() {
+            var password1 = $("#password1").val();
+            var password2 = $("#password2").val();
+
+            if (password1 == password2) {
+                $("#validate-status").text(" ");
+                $("#passSave").attr("disabled", false);
+            }
+            else {
+                $("#validate-status").text("Şifreler Aynı Olmalı !!");
+                $("#passSave").attr("disabled", true);
+            }
+        }
+
+        $(function (e) {
+            "use strict";
+            $(".date-inputmask").inputmask("dd/mm/yyyy"),
+                $(".phone-inputmask").inputmask("(999) 999-9999")
+        });
+    </script>
+}

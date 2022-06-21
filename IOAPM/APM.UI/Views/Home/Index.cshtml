@@ -1,0 +1,706 @@
+﻿<style>
+	.table th {
+		font-weight: bold;
+	}
+
+	.table td, .table th {
+		vertical-align: middle;
+		padding: 5px !important;
+		text-align: center;
+	}
+
+	#progress {
+		border: 1px solid black;
+		position: relative;
+		padding: 3px;
+		margin-right: 30px;
+	}
+
+	#percent {
+		position: absolute;
+		left: 50%;
+		font-family: "Myriad Pro";
+		font-weight: bold;
+	}
+
+	#bar {
+		display: none;
+		height: 20px;
+		background-color: green;
+		width: 0%;
+		opacity: 0.1;
+	}
+
+	.table-hover2 tbody tr:hover td, .table-hover tbody tr:hover th {
+		background-color: #6c757dc7;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: inherit;
+	}
+
+	canvas {
+		height: 600px !important;
+	}
+</style>
+
+@using System.Globalization;
+@using System.Drawing;
+@model APM.Repository.Dto.IndexDto
+@{
+	ViewData["Title"] = "Ana Sayfa";
+	var projectNames = Model.MyProject.Select(p => p.NAME);
+	var projectWhours = Model.projectWhour;
+	var projectWhoursAsTime = getAllWhoursAsTime(projectWhours);
+
+	List<string> colorsRGBopacity = new List<string>();
+	List<string> colorsRGB = new List<string>();
+	List<Color> colors = new List<Color>();
+	List<string> daysForChart = new List<string>();
+	List<double> whoursForChart = new List<double>();
+	List<int> waitingWhoursForChart = new List<int>();
+
+	Random rnd = new Random();
+	for (int i = 0; i < Model.myProjectCount; i++)
+	{
+		colors.Add(Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256)));
+	}
+	foreach (var item in colors)
+	{
+		colorsRGBopacity.Add("rgba(" + item.R + "," + item.G + "," + item.B + ",0.3)");
+		colorsRGB.Add("rgba(" + item.R + "," + item.G + "," + item.B + ",1)");
+	}
+
+}
+@functions{
+	string twoDigit(int n)
+	{
+		return (n > 9 ? "" + n : "0" + n);
+	}
+	TimeSpan DecimalToTimeSpan(double dec)
+	{
+		var hour = (int)Math.Truncate(dec);
+		var min = (int)Math.Round(((dec) * 60) % 60);
+
+		return new TimeSpan(hour, min, 0);
+	}
+	string DecimalToTime(double dec)
+	{
+		var hour = (int)Math.Truncate(dec);
+		var min = (int)Math.Round(((dec) * 60) % 60);
+
+		return (twoDigit(hour) + ":" + twoDigit(min));
+	}
+	string getDiff(double wh, int waitingWh)
+	{
+		var time = DecimalToTimeSpan(wh);
+		var waiting = new TimeSpan(waitingWh, 0, 0);
+		var timeDiff = time - waiting;
+		return string.Format("{0:00}:{1:00}", Math.Truncate(timeDiff.TotalHours), timeDiff.Minutes);
+	}
+	List<string> getAllWhoursAsTime(List<double> whour)
+	{
+		List<string> whours = new List<string>();
+
+		foreach (var item in whour)
+		{
+			whours.Add(DecimalToTime(item));
+		}
+
+		return whours;
+	}
+}
+
+
+
+<div class="row" style="justify-content: center;">
+
+    @if (Model.Notification.Count != 0)
+    {
+        @if (User.Identity.HavePermission(Roles.NORMAL))
+        {
+            <div class="modal fade" id="notificationModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="width: inherit;">
+                        <div class="modal-header">
+                            <h4 class="modal-title">
+                                <i class="fas fa-fw fa-bell text-danger"></i>
+                                Duyurular
+                            </h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            @foreach (var item in Model.Notification)
+                            {
+                                <p>@item.TEXT_INFO</p><hr />
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Duyuru Sil</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+        @{ string holidaySummary = null, currentMonth = CultureInfo.GetCultureInfo("tr-TR").DateTimeFormat.MonthNames[DateTime.Now.Month - 1];
+            int waitingWhour, totalWaitingWhour = 0;
+            double totalWhour = 0, diffWhour = 0, totalProjectWhour = 0;
+
+        }
+        @if (User.Identity.HavePermission(Roles.ADMIN))
+        {
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="text-align:left">
+                <div class="page-header">
+                    <h2 class="pageheader-title"><b>Ana Sayfa</b></h2><hr>
+                </div>
+            </div>
+            <div class="row" style="text-align:center">
+                <!-- Column -->
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="card border-3 border-top border-top-primary" style="border-bottom-color: #5969ff">
+                        <div class="card-body">
+                            <div class="d-inline-block">
+                                <h5 class="text-muted border-bottom pb-2">Müşteri Sayısı</h5>
+                                <h2 class="mb-0">@Model.customerCount</h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg  bg-secondary-light mt-1">
+                                <i class="fa fa-handshake fa-fw fa-sm text-danger"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="card border-3 border-top border-top-primary" style="border-bottom-color: #5969ff">
+                        <div class="card-body">
+                            <div class="d-inline-block">
+                                <h5 class="text-muted border-bottom pb-2">Çalışan Sayısı</h5>
+                                <h2 class="mb-0">@Model.employeeCount</h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg  bg-info-light mt-1">
+                                <i class="fa fa-user fa-fw fa-sm text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="card border-3 border-top border-top-primary" style="border-bottom-color: #5969ff">
+                        <div class="card-body">
+                            <div class="d-inline-block">
+                                <h5 class="text-muted border-bottom pb-2">Proje Sayısı</h5>
+                                <h2 class="mb-0">@Model.projectCount</h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg  bg-primary-light mt-1">
+                                <i class="fa fas fa-file-alt fa-fw fa-sm text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="card border-3 border-top border-top-primary" style="border-bottom-color: #5969ff">
+                        <div class="card-body">
+                            <div class="d-inline-block">
+                                <h5 class="text-muted border-bottom pb-2">Aktivite Sayısı</h5>
+                                <h2 class="mb-0">@Model.activityCount</h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg  bg-brand-light mt-1">
+                                <i class="fa fas fa-file-code fa-fw fa-sm text-brand"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        }
+        else
+        {
+            <div class="row" style="text-align:center">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="text-align:left">
+                    <div class="page-header">
+                        <h2 class="pageheader-title"><b>Ana Sayfa</b></h2><hr>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card border-3 border-top border-top-primary" style="border-bottom-color: #5969ff">
+                        <div class="card-body">
+                            <div class="d-inline-block">
+                                <h5 class="text-muted border-bottom pb-2">Proje Sayısı</h5>
+                                <h2 class="mb-0">@Model.myProjectCount</h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg  bg-primary-light mt-1">
+                                <i class="fa fas fa-file-alt fa-fw fa-sm text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card border-3 border-top border-top-primary" style="border-bottom-color: #5969ff">
+                        <div class="card-body">
+                            <div class="d-inline-block">
+                                <h5 class="text-muted border-bottom pb-2">Aktivite Sayısı</h5>
+                                <h2 class="mb-0">@Model.myActivityCount</h2>
+                            </div>
+                            <div class="float-right icon-circle-medium  icon-box-lg  bg-brand-light mt-1">
+                                <i class="fa fas fa-file-code fa-fw fa-sm text-brand"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light rounded shadow border border-secondary mb-4">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#NavBarCustomerProject" aria-controls="NavBarCustomerProject" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <span class="nav navbar-brand" style="color: #71748d;">Müşteri & Proje Efor Özeti </span>
+                </div>
+                <div class="collapse navbar-collapse" id="NavBarCustomerProject" style="justify-content: center;">
+                    <ul class="nav navbar-nav rounded border-bottom border-primary" style="color: #71748d;margin-right: 30%;">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#CustomerProjectTable" data-toggle="collapse" aria-expanded="false" aria-controls="CustomerProjectTable">Tablo</a>
+                        </li>
+                        <li>
+                            <span class="nav-link">-</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#CustomerProjectGraphic" data-toggle="collapse" aria-expanded="false" aria-controls="CustomerProjectGraphic">Grafik</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Müşteri PRoje bazlı rapor tablosu-->
+        <div class="row collapse" id="CustomerProjectTable" style="justify-content: center;">
+            <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card text-white bg-secondary mb-3 mt-3">
+                    <div class="row">
+                        <div class="col-xl-8">
+                            <h5 class="card-header bg-secondary"><i class="fas fa-file-medical-alt" style="margin-right: 10px;"></i> @currentMonth @DateTime.Now.Year - Müşteri & Proje Bazlı Efor Özeti</h5>
+                        </div>
+                        <div class="col-xl-4" style="align-self: center;padding-right: 25px;">
+                            <button type="button" tableexport-id="f444028-xlsx" class="btn btn-light" style="float: right;"><i class="mr-1 fas fa-file-excel text-success"></i>Dışa Aktar</button>
+                        </div>
+                    </div>
+                    <div class="text-center table-responsive">
+                        <div class="card-body p-0">
+                            <div class="table-hover">
+                                <table class="table table-striped first" id="tb2">
+                                    <thead class="bg-light">
+                                        <tr class="border-0">
+                                            <th class="border-0">Müşteri</th>
+                                            <th class="border-0">Proje</th>
+                                            <th class="border-0">Çalışma Saati<i style="font-weight: normal;"> (Saat:Dakika)</i></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ int i2 = 0;}
+                                        @foreach (var item in Model.MyProject)
+                                        {
+                                            <tr>
+                                                <td class="tableexport-string">@item.CUSTOMER.CUSTOMER_NAME</td>
+                                                <td class="tableexport-string">@item.NAME</td>
+                                                <td class="tableexport-string">@DecimalToTime(Model.projectWhour[i2])</td>
+                                            </tr>
+                                            totalProjectWhour += Model.projectWhour[i2];
+                                            i2++;
+
+                                        }
+                                    </tbody>
+                                    <tfoot class="bg-dark text-white">
+                                        <tr>
+                                            <td></td>
+                                            <td class="text-right font-weight-bold">Toplam :</td>
+                                            <td class="font-weight-bold tableexport-string">@DecimalToTime(totalProjectWhour)</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Müşteri Proje bazlı grafik -->
+
+        <div class="row collapse" id="CustomerProjectGraphic" style="justify-content: center;">
+            <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card text-white mb-3 mt-3">
+                    <canvas id="CustomerProjectChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light rounded shadow border border-secondary mb-4">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#NavBarWhour" aria-controls="NavBarWhour" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <span class="nav navbar-brand" style="color: #71748d;">Aylık Çalışma Saati Raporu</span>
+                </div>
+                <div class="collapse navbar-collapse" id="NavBarWhour" style="justify-content: center;">
+                    <ul class="nav navbar-nav rounded border-bottom border-primary" style="color: #71748d;margin-right: 30%;">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#EmployeeWhourTable" data-toggle="collapse" aria-expanded="false" aria-controls="EmployeeWhourTable">Tablo</a>
+                        </li>
+                        <li>
+                            <span class="nav-link">-</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#EmployeeWhourGraphic" data-toggle="collapse" aria-expanded="false" aria-controls="EmployeeWhourGraphic">Grafik</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Çalışma saati tablosu -->
+        <div class="row collapse" id="EmployeeWhourTable" style="justify-content: center;">
+            <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card text-white bg-secondary mb-3">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <h5 class="card-header bg-secondary"><i class="fas fa-file-medical-alt" style="margin-right: 10px;"></i> @currentMonth @DateTime.Now.Year - Günlük Aktiviteler </h5>
+                        </div>
+                        <div class="col-xl-4" style="align-self: center;">
+                            <div id="progress" class="bg-secondary rounded">
+                                <span id="percent" class="text-white"></span>
+                                <div id="bar" class="bg-success rounded"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2" style="align-self: center;padding-right: 25px;">
+                            <button type="button" tableexport-id="a70aea2-xlsx" class="btn btn-light" style="float: right;"><i class="mr-1 fas fa-file-excel text-success"></i>Dışa Aktar</button>
+                        </div>
+                    </div>
+                    <div class="text-center table-responsive">
+                        <div class="card-body p-0">
+                            <div class="table table-hover2">
+                                <table class="table table-striped first" id="tb">
+                                    <thead class="bg-light">
+                                        <tr class="border-0">
+                                            <th class="border-0">Tarih</th>
+                                            <th class="border-0">Gün</th>
+                                            <th class="border-0">Çalışma Saati<i style="font-weight: normal;"> (Saat:Dakika)</i></th>
+                                            <th class="border-0">Beklenen<i style="font-weight: normal;"> (Saat)</i></th>
+                                            <th class="border-0">Fazla/Eksik<i style="font-weight: normal;"> (Saat:Dakika)</i></th>
+                                            <th class="border-0"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < DateTime.Now.Day; i++)
+                                        {
+                                            DateTime date = new DateTime((DateTime.Now.Year), (DateTime.Now.Month), i + 1);
+                                            string currentDayTR = CultureInfo.GetCultureInfo("tr-TR").DateTimeFormat.DayNames[(int)date.DayOfWeek];
+                                            holidaySummary = Model.DaysSummary[i];
+                                            if ((date.DayOfWeek == DayOfWeek.Saturday) || (date.DayOfWeek == DayOfWeek.Sunday) || holidaySummary != null)
+                                                waitingWhour = 0;
+                                            else
+                                                waitingWhour = 8;
+
+                                            totalWaitingWhour += waitingWhour;
+                                            totalWhour += Model.wHours[i];
+                                            diffWhour += Model.wHours[i] - waitingWhour;
+
+                                            string whourStatus = "bg-info-light text-dark", whourStatusIcon = "fas fas fa-check-circle fa-sm text-info";
+
+                                            if (waitingWhour == 0)
+                                            {
+                                                whourStatus = "bg-light text-dark";
+                                                whourStatusIcon = "fas fa-minus-circle fa-sm text-secondary";
+                                            }
+                                            else if ((Model.wHours[i] - waitingWhour) < 0)
+                                            {
+                                                whourStatus = "bg-danger-light text-dark";
+                                                whourStatusIcon = "fas fa-arrow-circle-down fa-sm text-danger";
+                                            }
+                                            else if ((Model.wHours[i] - waitingWhour) > 0)
+                                            {
+                                                whourStatus = "bg-success-light text-dark";
+                                                whourStatusIcon = "fas fa-arrow-circle-up fa-sm text-success";
+                                            }
+
+                                            daysForChart.Add(date.Day + ". Gün");
+                                            whoursForChart.Add(Model.wHours[i]);
+                                            waitingWhoursForChart.Add(waitingWhour);
+
+                                            <tr class="@whourStatus">
+                                                <td class="tableexport-string" style="cursor:pointer"><a asp-controller="Activity" asp-action="MyActivity" asp-route-from="@(date.Month).@(date.Day).@(date.Year)">@(date.Day).@(date.Month).@(date.Year) @holidaySummary</a></td>
+                                                <td class="tableexport-string">@currentDayTR</td>
+                                                <td class="tableexport-string">@DecimalToTime(Model.wHours[i])</td>
+                                                <td class="tableexport-string">@waitingWhour</td>
+                                                <td class="tableexport-string">@getDiff(Model.wHours[i], waitingWhour)</td>
+                                                <td><i class="@whourStatusIcon"></i></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot class="bg-dark text-white">
+                                        <tr>
+                                            <td></td>
+                                            <td class="text-right font-weight-bold">Toplam :</td>
+                                            <td class="font-weight-bold tableexport-string">@DecimalToTime(totalWhour)</td>
+                                            <td class="font-weight-bold tableexport-string">@DecimalToTime(totalWaitingWhour)</td>
+                                            <td class="font-weight-bold tableexport-string">@getDiff(totalWhour, totalWaitingWhour)</td>
+                                            @if (diffWhour < 0)
+                                            {
+                                                <td><i class="fas fa-arrow-circle-down fa-sm text-danger"></i></td>
+                                            }
+                                            else if (diffWhour > 0)
+                                            {
+                                                <td><i class="fas fa-arrow-circle-up fa-sm text-success"></i></td>
+                                            }
+                                            else
+                                            {
+                                                <td><i class="fas fas fa-check-circle fa-sm text-info"></i></td>
+                                            }
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Çalışma saati grafik -->
+
+        <div class="row collapse" id="EmployeeWhourGraphic" style="justify-content: center;">
+            <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card text-white mb-3 mt-3">
+                    <canvas id="EmployeeWhourChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+
+        @{double percent = ((totalWhour / totalWaitingWhour) * 100);
+            if (percent > 100)
+                percent = 100;
+            else if (percent < 0)
+                percent = 1;
+            else
+                percent = (int)percent;
+        }
+    </div>
+<script src="~/assets/vendor/charts/Chart.js/Chart.js"></script>
+<script src="~/assets/vendor/charts/Chart.js/Chart.min.js"></script>
+<script src="~/assets/vendor/charts/Chart.js/chartjs-plugin-labels.js"></script>
+
+
+@section scripts{
+	<script>
+        function decimalToTime(decimal) {
+            if ((decimal % 1) === 0)
+                return ((decimal) + " s");
+            else {
+                var hour = Math.floor(decimal);
+                var min = Math.round((decimal * 60) % 60);
+
+                return ((hour) + " s, " + (min)+" dk");
+            }
+        }
+
+        $(document).ready(function () {
+            var projectNames = @Html.Raw(Json.Serialize(projectNames));
+            var projectWhour = @Html.Raw(Json.Serialize(projectWhours));
+            var colors = @Html.Raw(Json.Serialize(colorsRGB));
+            var colorsOpacity = @Html.Raw(Json.Serialize(colorsRGBopacity));
+
+            var whours =@Html.Raw(Json.Serialize(whoursForChart));
+            var waitingWhours =@Html.Raw(Json.Serialize(waitingWhoursForChart));
+            var days=@Html.Raw(Json.Serialize(daysForChart));
+
+
+            var ctx1 = document.getElementById('CustomerProjectChart').getContext('2d');
+            var myChart1 = new Chart(ctx1, {
+                type: 'pie',
+                data: {
+                    labels: projectNames,
+                    datasets: [{
+                        label: '# of Votes',
+                        data: projectWhour,
+                        backgroundColor: colorsOpacity,
+                        borderColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItems, data) {
+                                return data.labels[tooltipItems.index];
+                            }
+                        }
+                    },
+                    response: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    plugins: {
+                        labels: [{
+                            render: 'label',
+                            position: 'outside',
+                            fontSize: 15,
+                            textShadow: true,
+                        },
+                        {
+                            render: function (args) {
+                                return decimalToTime(args.value);
+                            },
+                            textShadow: true,
+                            fontSize: 16
+                        }
+                        ]
+                    }
+                }
+            });
+
+
+            var ctx2 = document.getElementById('EmployeeWhourChart').getContext('2d');
+
+            window.chartColors = {
+                red: 'rgb(255, 99, 132)',
+                orange: 'rgb(255, 159, 64)',
+                yellow: 'rgb(255, 205, 86)',
+                green: 'rgb(75, 192, 192)',
+                blue: 'rgb(54, 162, 235)',
+                purple: 'rgb(153, 102, 255)',
+                grey: 'rgb(231,233,237)'
+            };
+
+            var myChart2 = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Çalışma Saati',
+                        borderColor: window.chartColors.blue,
+                        borderWidth: 3,
+                        pointBorderWidth: 4,
+                        pointHitRadius:10,
+                        fill: false,
+                        data: whours
+                    },
+                    {
+                        label: 'Beklenen Çalışma Saati',
+                        borderColor: window.chartColors.red,
+                        borderWidth: 3,
+                        pointBorderWidth: 4,
+                        pointHitRadius:10,
+                        fill: false,
+                        data: waitingWhours
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Aylık Çalışma Saati Grafiği'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: true
+                    },
+                    annotation: {
+                        annotations: [{
+                            type: 'line',
+                            mode: 'horizontal',
+                            scaleID: 'y-axis-0',
+                            value: 2225,
+                            endValue: 0,
+                            borderColor: 'rgb(75, 192, 192)',
+                            borderWidth: 4,
+                            label: {
+                                enabled: true,
+                                content: 'Trendline',
+                                yAdjust: -16,
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+
+
+
+
+        $(window).on('load', function () {
+            $('#notificationModal').modal('show');
+            $("#bar").css("width",("@percent%"))
+            $("#bar").animate({
+                 width: "toggle",
+                opacity:"0.9"
+            },1500);
+            $("#percent").text('@percent%');
+            $("#percent").css("z-index", "1");
+        });
+
+        var exportDate = new Date();
+        var tableeexport = $('#tb').tableExport({
+            headers: true,
+            footers: true,
+            formats: ["xlsx"],
+            filename: "Aylık Aktivite Raporum " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear(),
+            bootstrap: true,
+            exportButtons: false,
+            position: "top",
+            ignoreRows: null,
+            ignoreCols: [5],
+            trimWhitespace: true,
+            RTL: true,
+            sheetname: "Raporum " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear()
+        });
+        var tableeexport = $('#tb2').tableExport({
+            headers: true,
+            footers: true,
+            formats: ["xlsx"],
+            filename: "Proje & Müşteri Raporum " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear(),
+            bootstrap: true,
+            exportButtons: false,
+            position: "top",
+            ignoreRows: null,
+            ignoreCols: null,
+            trimWhitespace: true,
+            RTL: true,
+            sheetname: "Raporum " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear()
+        });
+	</script>
+}
+
+

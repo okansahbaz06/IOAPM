@@ -1,0 +1,160 @@
+﻿@model List<APM.Repository.Dto.ConstantDto>
+@{
+    ViewData["Title"] = "Unvan İsimleri";
+}
+<div class="ecommerce-widget">
+
+    <div class="row" style="justify-content: center;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Unvan Isimleri </h2><hr />
+            </div>
+        </div>
+        <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 align-self-center">
+            <div class="card">
+                <h5 class="card-header">Unvanlar</h5>
+                <button class="btn btn-outline-success" data-toggle="modal" data-target="#create">Yeni Unvan Ekle</button>
+                <div class="text-center">
+                    <div class="card-body p-0">
+                        <div class="table-hover">
+                            <table class="table" id="tb">
+                                <thead class="bg-light">
+                                    <tr class="border-0">
+                                        <th class="border-0">#</th>
+                                        <th class="border-0">Unvan Isimleri</th>
+                                        <th class="border-0">Düzenle</th>
+                                        <th class="border-0">Sil</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.ID</td>
+                                            <td>@item.NAME</td>
+                                            <td>
+                                                <button class="btn btn-outline-primary viewModel" data-toggle="modal" data-target="#edit" data-name="@item.NAME" data-id="@item.ID">Düzenle</button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-danger viewModelDel" data-toggle="modal" data-target="#delete" data-name="@item.NAME" data-id="@item.ID">Sil</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> @*Database ----------------------*@
+
+</div>
+
+
+
+<!----------  Modals ---------------------------->
+<!-- Edit -->
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Düzenle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="Edit" method="post" role="form">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="hidden" id="levelId" value="" name="id" />
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Unvan Adı</label>
+                            <input id="levelName" type="text" name="name" data-parsley-trigger="change" value="" required="" placeholder="Unvan Adı Giriniz" autocomplete="off" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-success" asp-action="Edit">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete -->
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Unvan Sil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="Delete" method="post" role="form">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-group">
+                            Silmek istediğinize emin misiniz ?
+                            <input type="hidden" id="levelIdDel" value="19" name="id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-danger" asp-action="Delete">Sil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Create -->
+<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Yeni Unvan Ekle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="Create" method="post" role="form">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="name">Unvan Adı</label>
+                            <input id="levelName" type="text" name="name" data-parsley-trigger="change" value="" required="" placeholder="Unvan Adı Giriniz" autocomplete="off" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-success" asp-action="Create">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+
+    $(".viewModel").click(function () {
+        var name = $(this).data("name");
+        document.getElementById("levelName").value = name;
+        var id = $(this).data("id");
+        document.getElementById("levelId").value = id;
+    })
+    $(".viewModelDel").click(function () {
+        var id = $(this).data("id");
+        document.getElementById("levelIdDel").value = id;
+    })
+
+</script>
+
+

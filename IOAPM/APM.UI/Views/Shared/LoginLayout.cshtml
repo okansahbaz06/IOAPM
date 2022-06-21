@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/64d58efce2.js"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="~/style2.css" />
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+
+
+    <title>Aktivite Takip Ve Proje Yönetim Sistemi</title>
+    <style>
+
+        .alertmessage {
+            position: fixed;
+            top: 100%;
+            left: 50%;
+            width: 400px;
+            margin-left: -200px;
+            margin-top: -150px;
+            text-align: center;
+            outline: 9999px solid rgba(0,0,0,0.2);
+            display: none;
+            z-index: 999999;
+            border-radius: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <div class="alert alert-danger alertmessage" id="danger-alert">
+            <strong>Hata ! </strong><br /> Mail Adresi Veya Şifre Yanlış ..
+        </div>
+        <div class="alert alert-danger alertmessage" id="danger-alert2">
+            <strong>Hata ! </strong><br /><p id="errorMsg"></p>
+        </div>
+       
+        <div class="forms-container">
+            <div class="signin-signup">
+                @RenderBody()
+            </div>
+        </div>
+
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+
+                    <h3>Aktivite Takip Ve Proje Yönetim Sistemi</h3>
+                    <p>
+                        Çalışmaya Hazır Mısın Hadi Başlayalım!
+                    </p>
+
+                </div>
+                <img src="~/img/register.svg" class="image" alt="" />
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/assets/libs/js/ajax.js"></script>
+    <script src="~/assets/vendor/inputmask/js/jquery.inputmask.bundle.js"></script>
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+
+    @RenderSection("Scripts", false)
+
+</body>
+</html>
+
+
+<script>
+    $(document).ajaxError(function (xhr, result) {
+        if (result.status === 403) {
+            window.location.href = '/Home/Index';
+        }
+        if (result.status === 401) {
+            window.location.href = '/Login/NotFound404';
+        }
+    });
+
+
+    $(document).ready(function () {
+        $("#danger-alert").hide();
+    });
+    function showAlert2(msg) {
+        document.getElementById("errorMsg").innerHTML = msg;
+        $("#danger-alert2").fadeTo(3000, 500).slideUp(500, function () {
+            $("#danger-alert2").slideUp(500);
+        });
+    };
+    function showAlert() {
+        $("#danger-alert").fadeTo(3000, 500).slideUp(500, function () {
+            $("#danger-alert").slideUp(500);
+        });
+    };
+
+
+</script>

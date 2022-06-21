@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "APM.Models/1.0.0": {
+        "dependencies": {
+          "APM.Entities": "1.0.0"
+        },
+        "runtime": {
+          "APM.Models.dll": {}
+        }
+      },
+      "APM.Entities/1.0.0": {
+        "runtime": {
+          "APM.Entities.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "APM.Models/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "APM.Entities/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

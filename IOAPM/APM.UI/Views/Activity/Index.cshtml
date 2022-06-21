@@ -1,0 +1,1336 @@
+﻿@model APM.Repository.Dto.ActivityAllDto
+@{
+	ViewData["Title"] = "Aktivite İşlemleri";
+}
+
+
+<style>
+	.filter-div {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		position: relative;
+		display: none;
+		border-right-color: rgb(89, 105, 255);
+		border-bottom-color: rgb(89, 105, 255);
+		border-left-color: rgb(89, 105, 255);
+		border-top: none !important;
+		background-color: rgb(248, 249, 250) !important;
+		border-radius: 0px 0px .25rem .25rem;
+		opacity: 0.9;
+		z-index: 99;
+	}
+
+	.filter-th {
+		text-align: center;
+		display: table-cell;
+		vertical-align: middle !important;
+		padding-bottom: 5px !important;
+		padding-top: 5px !important;
+	}
+
+	.table td {
+		position: relative;
+	}
+
+	#module {
+		line-height: 1.5;
+		margin-bottom: 0px !important;
+	}
+
+
+		#module .read-more.collapse:not(.show) {
+			display: block;
+			height: 1.5rem;
+			overflow: hidden;
+			margin-bottom: 0px !important;
+		}
+
+		#module .read-more.collapsing {
+			height: 1.5rem;
+			margin-bottom: 0px !important;
+		}
+
+		#module a.collapsed::after {
+			content: '+ Daha Fazla';
+			margin-top: 0px !important;
+		}
+
+		#module a:not(.collapsed)::after {
+			content: '- Daha Az';
+			margin-top: 0px !important;
+		}
+
+	.table td {
+		vertical-align: middle;
+		padding: 5px !important;
+		text-align: center;
+	}
+</style>
+
+@{
+	string currentDate = DateTime.Now.ToString("dd/MM/yyyy");
+}
+@functions{
+	string twoDigit(double n)
+	{
+		return (n > 9 ? "" + n : "0" + n);
+	}
+	string convertToDot(double n)
+	{
+		if (n % 1 != 0)
+		{
+			var a = n.ToString().Split(",");
+			return (a[0] + "." + a[1]);
+		}
+		else
+		{
+
+			return n.ToString();
+		}
+	}
+}
+<div class="ecommerce-widget">
+	<div class="row" style="justify-content: center;">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="page-header">
+				<h2 class="pageheader-title">Aktivite İşlemleri</h2>
+			</div>
+		</div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="card">
+				<h5 class="card-header">Aktivite Bilgileri</h5>
+				<button class="btn btn-outline-success" data-toggle="modal" data-target="#create">Yeni Aktivite Ekle</button>
+				<div class="row mt-3" style="margin:5px;">
+					<form>
+						<div class="col-md-auto">
+							<input type="hidden" name="All" value="false" />
+							<input type="submit" class="btn btn-outline-secondary" value="Sadece Bu Ay'ı Göster" />
+						</div>
+					</form>
+					<form asp-action="Index" class="form-inline">
+						<label class="mt-2">Aralık : </label>
+						<div class="row">
+							<div class="col-6">
+								<div class="form-group">
+									<div class="form-group">
+
+										<div class="input-group date datePicker" id="mydatetimepicker8" data-target-input="nearest">
+											<input type="text" value="@ViewData["fromDate"]" class="form-control datetimepicker-input" data-target="#mydatetimepicker8" name="from">
+											<div class="input-group-append" data-target="#mydatetimepicker8" data-toggle="datetimepicker">
+												<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+											</div>
+										</div>
+
+
+									</div>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="form-group">
+									<div class="input-group date datePicker mr-3" id="mydatetimepicker9" data-target-input="nearest">
+										<input type="text" value="@ViewData["toDate"]" class="form-control datetimepicker-input" data-target="#mydatetimepicker9" name="to">
+										<div class="input-group-append" data-target="#mydatetimepicker9" data-toggle="datetimepicker">
+											<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="form-group col-6">
+								<input type="submit" class="btn btn-outline-secondary" value="Aktiviteleri Getir" />
+							</div>
+							<div class="form-group col-6">
+								<button class="btn btn-outline-secondary" tableexport-id="a70aea2-xlsx"> <i class="fas fa-file-excel"></i> Excel Olarak Indir</button>
+							</div>
+
+						</div>
+
+
+					</form>
+
+				</div>
+				<hr />
+
+				<div class="card-body p-0">
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered dataTable table-hover" style="font-size: small;" role="grid" aria-describedby="example_info" id="tb" data-name="cool-table">
+							<thead class="bg-light" style="text-align: center;">
+								<tr class="border-0">
+									<th class="border-0"><button class="btn btn-outline-secondary" value="Filtrele" id="theadFilters"><i class="fas fa-filter"></i></button></th>
+									<th class="border-0"></th>
+									<th class="border-0" style="font-weight: bold;">#</th>
+									<th class="border-0" style="font-weight: bold;">Müşteri</th>
+									<th class="border-0" style="font-weight: bold;">Proje</th>
+									<th class="border-0" style="font-weight: bold;">Çalışan</th>
+									<th class="border-0" style="font-weight: bold;">Oluşturan</th>
+									<th class="border-0" style="font-weight: bold;">Durum</th>
+									<th class="border-0" style="font-weight: bold;">Önceliği</th>
+									<th class="border-0" style="font-weight: bold;">Fatura</th>
+									<th class="border-0" style="font-weight: bold;">Lokasyon</th>
+									<th class="border-0" style="font-weight: bold;">Referans</th>
+									<th class="border-0" style="font-weight: bold;">Detay</th>
+									<th class="border-0" style="font-weight: bold;">Aktivite Tarihi</th>
+									<th class="border-0" style="font-weight: bold;">Başlama Saati</th>
+									<th class="border-0" style="font-weight: bold;">Bitiş Saati</th>
+									<th class="border-0" style="font-weight: bold;">Çalışma Saati</th>
+									<th class="border-0" style="font-weight: bold;">Saat : Dakika</th>
+									<th class="border-0" style="font-weight: bold;">Oluşturma Tarihi</th>
+									<th class="border-0" style="font-weight: bold;">I.Müşteri Adı</th>
+
+								</tr>
+							</thead>
+							<thead class="bg-light filter-div card shadow" style="text-align: center;" id="filterThead">
+								<tr class="border-0 tableexport-ignore">
+
+									<th class="border-0 filter-th" style="padding: 0px;">Düzenle</th>
+									<th class="border-0 filter-th" style="padding: 0px;">Sil</th>
+									<th class="border-0 filter-th" style="padding: 0px;"></th>
+
+									<th class="border-0 filter-th" style="padding: 0px;">
+
+										<div id="divfilterCustomer">
+											<select class="form-select" id="filterCustomer">
+												<option value="all" class="all">Hepsi</option>
+												@foreach (var item in Model.customerDto)
+												{
+													<option value="@item.NAME" class="@item.ID">@item.NAME</option>
+												}
+											</select>
+										</div>
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;">
+										<div id="divfilterProject">
+											<select class="form-select" id="filterProject">
+												<option value="Hepsi" class="all">Hepsi</option>
+												@foreach (var item in Model.ProjectDto)
+												{
+													<option value="@item.NAME" class="@item.CUSTOMER.ID">@item.NAME</option>
+												}
+											</select>
+										</div>
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;">
+										<div id="divfilterEmployee">
+											<select class="form-select" id="filterEmployee">
+												<option value="Hepsi" class="all">Hepsi</option>
+												@foreach (var item in Model.EmployeeDto)
+												{
+													<option value="@item.NAME">@item.NAME</option>
+												}
+											</select>
+										</div>
+
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;">
+										<div id="divfilterCreatedEmployee">
+											<select class="form-select" id="filterCreatedEmployee">
+												<option value="Hepsi">Hepsi</option>
+												@foreach (var item in Model.EmployeeDto)
+												{
+													<option value="@item.NAME">@item.NAME</option>
+												}
+											</select>
+										</div>
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;">
+										<div id="divfilterStatus">
+											<select class="form-select" id="filterStatus">
+												<option value="Hepsi">Hepsi</option>
+												<option value="Aktif">Aktif</option>
+												<option value="Pasif">Pasif</option>
+											</select>
+										</div>
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;">
+										<div id="divfilterPriority">
+											<select class="form-select" id="filterPriority">
+												<option value="Hepsi">Hepsi</option>
+												@foreach (var item in Model.PriorityDto)
+												{
+													<option value="@item.NAME">@item.NAME</option>
+												}
+											</select>
+										</div>
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;">
+										<div id="divfilterInvoice">
+											<select class="form-select" id="filterInvoice">
+												<option value="Hepsi">Hepsi</option>
+												<option value="Evet">Evet</option>
+												<option value="Hayır">Hayır</option>
+											</select>
+										</div>
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;">
+										<div id="divfilterLocation">
+											<select class="form-select" id="filterLocation">
+												<option value="Hepsi">Hepsi</option>
+												<option value="Şirket İçi">Şirket İçi</option>
+												<option value="Uzaktan">Uzaktan</option>
+												<option value="Diğer">Diğer</option>
+											</select>
+										</div>
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;">
+									<th class="border-0 filter-th" style="padding: 0px;">
+										<div id="divsearchDetail">
+											<input type="text" id="searchDetail" placeholder="Ara" class="custom-control-label" />
+										</div>
+									</th>
+									<th class="border-0 filter-th" style="padding: 0px;"></th>
+									<th class="border-0 filter-th" style="padding: 0px;"></th>
+									<th class="border-0 filter-th" style="padding: 0px;"></th>
+									<th class="border-0 filter-th" style="padding: 0px;">(Ondalık)</th>
+									<th class="border-0 filter-th" style="padding: 0px;">(ss:dd)</th>
+									<th class="border-0 filter-th" style="padding: 0px;"></th>
+									<th class="border-0 filter-th" style="padding: 0px;"></th>
+
+								</tr>
+							</thead>
+
+							<tbody>
+								@foreach (var item in Model.ActivityDto)
+								{
+									<tr id="@item.ID">
+										<td><button type="button" data-id="@item.ID" data-toggle="modal" data-target="#edit" class="btn btn-outline-primary fBtnEdit"><i class="far fa-edit"></i></button></td>
+										<td>
+											<button type="button" class="btn btn-outline-danger viewModelDel" data-toggle="modal" data-target="#delete" data-id="@item.ID"><i class="fas fa-trash"></i></button>
+										</td>
+										<td id="@item.ID">@item.ID </td>
+										<td id="@item.ID-customer" data-id="@item.PROJECT.CUSTOMER.ID">@item.PROJECT.CUSTOMER.CUSTOMER_NAME </td>
+										<td id="@item.ID-project" class="tableexport-string" data-id="@item.PROJECT.ID">@item.PROJECT.PROJECT_NAME</td>
+										<td id="@item.ID-emp" data-id="@item.EMPLOYEE.ID" class="tableexport-string"> @item.EMPLOYEE.EMPLOYEE_NAME @item.EMPLOYEE.EMPLOYEE_SURNAME</td>
+										<td id="@item.ID-creator" class="tableexport-string" data-id="@item.CREATED_EMPLOYEE.ID">@item.CREATED_EMPLOYEE.EMPLOYEE_NAME @item.CREATED_EMPLOYEE.EMPLOYEE_SURNAME</td>
+										@if (item.STATUS == true)
+										{
+											<td id="@item.ID-status" class="tableexport-string">Aktif</td>
+										}
+										@if (item.STATUS == false)
+										{
+											<td id="@item.ID-status" class="tableexport-string">Pasif</td>
+										}
+										<td id="@item.ID-priority" class="tableexport-string" data-id="@item.PRIORITY.ID">@item.PRIORITY.PRIORITY_NAME</td>
+										@if (item.INVOICE == true)
+										{
+											<td id="@item.ID-invoice" class="tableexport-string">Evet</td>
+										}
+										@if (item.INVOICE == false)
+										{
+											<td id="@item.ID-invoice" class="tableexport-string">Hayır</td>
+										}
+										<td id="@item.ID-location" class="tableexport-string">@item.LOCATION</td>
+										<td id="@item.ID-reference" class="tableexport-string">@item.REFERENCE_NO</td>
+										@if (item.ACTIVITY_DETAIL.Length > 40)
+										{
+											<td id="@item.ID-detail" class="tableexport-string">
+												<div id="module" class="container">
+													<p style="margin:0px!important" class="collapse read-more" id="collapseExample-@item.ID" aria-expanded="false">@item.ACTIVITY_DETAIL</p>
+													<a role="button" class="collapsed" data-toggle="collapse" href="#collapseExample-@item.ID" style="font-size:small" aria-expanded="false" aria-controls="collapseExample-@item.ID"></a>
+												</div>
+											</td>
+										}
+										else
+										{
+											<td id="@item.ID-detail" class="tableexport-string">@item.ACTIVITY_DETAIL</td>
+										}
+										<td id="@item.ID-estStart" class="tableexport-string">@item.ACTIVITY_DATE.ToString("dd/MM/yyyy")</td>
+										<td id="@item.ID-start" class="tableexport-string">@item.START_TIME?.ToString("hh':'mm':'ss")</td>
+										<td id="@item.ID-end" class="tableexport-string">@item.END_TIME?.ToString("hh':'mm':'ss")</td>
+										<td id="@item.ID-whour" class="tableexport-string">@convertToDot(item.WHOUR)@*.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)*@</td>
+										<td id="@item.ID-whour2" class="tableexport-string">@(twoDigit(Math.Floor(item.WHOUR)) + ":" + twoDigit(Math.Round((item.WHOUR * 60) % 60)))</td>
+										<td class="tableexport-string">@item.CREATED_DATE.ToString("dd/MM/yyyy")</td>
+										<td id="@item.ID-iCustomerName" class="tableexport-string">@item.IndirectCustomerName</td>
+
+									</tr>
+								}
+							</tbody>
+						</table>
+						<div class="col text-right col-6">
+							<input type="submit" class="btn btn-outline-secondary ml-2" id="resetAllFilter" value="Filtreleri Sıfırla" />
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!------------Modals --------->
+<!-- Delete -->
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Aktivite Sil</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="formDelete" role="form">
+				<div class="modal-body">
+					<div class="card-body">
+						<div class="form-group">
+							Aktiviteyi Silmek istediğinize emin misiniz ?
+							<input type="hidden" id="IdDel" value="" name="ID" />
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+					<button type="button" class="btn btn-danger" id="btnDelete">Sil</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!--Create-->
+<div class="modal fade bd-example-modal-lg" id="create" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Yeni Aktivite Ekle</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+				<form id="createForm" role="form">
+					<div class="modal-body">
+						<div class="card-body">
+							<div class="form-group">
+								<input type="hidden" name="ID" />
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Müşterisi</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="selectCustomer">
+										<option class="all">Müşteri Seçiniz..</option>
+										@foreach (var item in Model.customerDto)
+										{
+											<option class="@item.ID">@item.NAME</option>
+										}
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Projesi</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" name="PROJECT_NUMBER" id="selectProject" disabled>
+										@foreach (var item in Model.ProjectDto)
+										{
+											<option value="@item.ID" class="@item.CUSTOMER.ID">@item.NAME</option>
+										}
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Fatura</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="c_invoice" name="INVOICE" typeof="bool">
+										<option selected value="true">Evet</option>
+										<option value="false">Hayır</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Lokasyon</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="c_location" name="LOCATION">
+										<option value="Şirket İçi">Şirket İçi</option>
+										<option selected value="Uzaktan">Uzaktan</option>
+										<option value="Diğer">Diğer</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Referans No</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input name="REFERENCE_NO" id="c_reference" autocomplete="off" placeholder="İsteğe Bağlı" style="height:inherit;" maxlength="20" class="form-control">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Aktivite Tarihi</label>
+								<div class="input-group date col-12 col-sm-6 col-lg-6 datePicker" id="mydatetimepicker5" data-target-input="nearest">
+									<input type="text" value="" id="c_activity_date" class="form-control datetimepicker-input" data-target="#mydatetimepicker5" name="ACTIVITY_DATE">
+									<div class="input-group-append" data-target="#mydatetimepicker5" data-toggle="datetimepicker">
+										<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Başlama Saati*</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input id="C_START_TIME" name="START_TIME" type="time" style=" height:inherit;" class="form-control">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Bitiş Saati</label>
+								<div class="col-12 col-sm-8 col-lg-6">
+									<div id="div_c_end_time">
+										<input id="C_END_TIME" name="END_TIME" type="time" style=" height:inherit;" class="form-control">
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Çalışma Saati*</label>
+								<div class="col-12 col-sm-4 col-lg-6">
+									<div id="div_c_whour">
+										<input id="C_WHOUR" type="time" style="height:inherit;" class="form-control" />
+										<input id="c_hideWhour" type="hidden" name="WHOUR" />
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Detay</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<textarea name="ACTIVITY_DETAIL" class="form-control" autocomplete="off" data-parsley-maxlength="100" placeholder="Aktivite Detayı" id="c_detail" rows="3" style="margin-top: 0px; margin-bottom: 0px; height: 119px;"></textarea>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Oluşturan Kişi</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="selectEmployee" name="CREATOR">
+										@foreach (var item in Model.EmployeeDto)
+										{
+											<option value="@item.ID">@item.NAME @item.SURNAME</option>
+										}
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">İkincil Müşteri Adı</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input name="IndirectCustomerName" id="c_iCustomerName" autocomplete="off" placeholder="İsteğe Bağlı" style="height:inherit;" maxlength="20" class="form-control">
+								</div>
+							</div>
+
+							<div class="form-group row text-right">
+								<div class="col col-sm-10 col-lg-10 offset-sm-1 offset-lg-0">
+									<button type="button" class="btn btn-space btn-success" id="BtnCreate">Ekle</button>
+									<button type="button" class="btn btn-space btn-secondary" data-dismiss="modal">Kapat</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--Edit-->
+<div class="modal fade bd-example-modal-lg" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Aktivite Düzenle</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+				<form id="editForm" role="form">
+					<div class="modal-body">
+						<div class="card-body">
+							<div class="form-group">
+								<input type="hidden" name="ID" id="activtyID" value="" />
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Müşterisi</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="e_selectCustomer">
+										<option class="all">Müşteri Seçiniz..</option>
+										@foreach (var item in Model.customerDto)
+										{
+											<option value="@item.ID" class="@item.ID">@item.NAME</option>
+										}
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Projesi</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="PROJECT_NUMBER" name="PROJECT_NUMBER" disabled>
+										@foreach (var item in Model.ProjectDto)
+										{
+											<option value="@item.ID" class="@item.CUSTOMER.ID">@item.NAME</option>
+										}
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Fatura</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="INVOICE" typeof="bool" name="INVOICE">
+										<option value="true">Evet</option>
+										<option value="false">Hayır</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Lokasyon</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="LOCATION" name="LOCATION">
+										<option value="Onsite">Onsite</option>
+										<option selected value="Remote">Remote</option>
+										<option value="Other">Other</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Referans No</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input id="REFERENCE_NO" name="REFERENCE_NO" placeholder="İsteğe Bağlı" autocomplete="off" style="height:inherit;" maxlength="20" class="form-control">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Aktivite Tarihi</label>
+								<div class="input-group date col-12 col-sm-6 col-lg-6 datePicker" id="mydatetimepicker1" data-target-input="nearest">
+									<input type="text" value="" class="form-control datetimepicker-input" data-target="#mydatetimepicker1" id="ACTIVITY_DATE" name="ACTIVITY_DATE">
+									<div class="input-group-append" data-target="#mydatetimepicker1" data-toggle="datetimepicker">
+										<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Başlama Saati*</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input id="START_TIME" name="START_TIME" type="time" style=" height:inherit;" class="form-control">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Bitiş Saati</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<div id="div_end_time">
+										<input id="END_TIME" name="END_TIME" type="time" style=" height:inherit;" class="form-control">
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Çalışma Saati*</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<div id="div_whour">
+										<input id="WHOUR" type="time" style="height:inherit;" class="form-control">
+										<input id="hideWhour" type="hidden" name="WHOUR" />
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Detay</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<textarea class="form-control" autocomplete="off" data-parsley-maxlength="100" placeholder="Activite Detayı" name="ACTIVITY_DETAIL" id="DETAIL" rows="3" style="margin-top: 0px; margin-bottom: 0px; height: 119px;"></textarea>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">Oluşturan Kişi</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<select class="form-select" id="CREATOR" name="CREATOR">
+										@foreach (var item in Model.EmployeeDto)
+										{
+											<option value="@item.ID">@item.NAME @item.SURNAME</option>
+										}
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-12 col-sm-4 col-form-label text-sm-right">İkincil Müşteri Adı</label>
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input name="IndirectCustomerName" id="IndirectCustomerName" autocomplete="off" placeholder="İsteğe Bağlı" style="height:inherit;" maxlength="20" class="form-control">
+								</div>
+							</div>
+
+							<div class="form-group row text-right">
+								<div class="col col-sm-10 col-lg-10 offset-sm-1 offset-lg-0">
+									<button type="button" class="btn btn-space btn-success" id="BtnEdit">Kaydet</button>
+									<button type="button" class="btn btn-space btn-secondary" data-dismiss="modal">Kapat</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+@section scripts{
+	<script>
+
+        $("#theadFilters").click(function () {
+            $("#filterThead").toggle("slow");
+        });
+
+
+
+        $("#END_TIME,#START_TIME").on('keyup change', function () {
+            $("#WHOUR").attr("disabled", true);
+
+            var start = $("#START_TIME").val();
+            var end = $("#END_TIME").val();
+
+            if (start != "" && end != "") {
+                var diff = getTwoTimeDiff(start, end);
+                var hour = Math.floor(diff);
+                var min = Math.round((diff * 60) % 60);
+
+                $("#WHOUR").val(twoDigit(hour) + ":" + twoDigit(min));
+            }
+        });
+
+        $("#WHOUR").keyup(function () {
+
+            $("#END_TIME").attr("disabled", true);
+            $("#END_TIME").val("");
+        });
+        $("#div_whour").click(function () {
+            $("#WHOUR").attr("disabled", false);
+            $("#END_TIME").attr("disabled", true);
+            $("#END_TIME").val("");
+        });
+        $("#div_end_time").click(function () {
+            $("#WHOUR").attr("disabled", true);
+            $("#END_TIME").attr("disabled", false);
+        });
+
+
+        $('#C_END_TIME,#C_START_TIME').on('keyup change', function () {
+            $("#C_WHOUR").attr("disabled", true);
+
+            var start = $("#C_START_TIME").val();
+            var end = $("#C_END_TIME").val();
+
+            $("#C_WHOUR").attr("disabled", true);
+
+            if (start != "" && end != "") {
+
+                var diff = getTwoTimeDiff(start, end);
+                var hour = Math.floor(diff);
+                var min = Math.round((diff * 60) % 60);
+
+                $("#C_WHOUR").val(twoDigit(hour) + ":" + twoDigit(min));
+
+            }
+        });
+
+        function twoDigit(n) {
+            return n > 9 ? "" + n : "0" + n;
+        }
+        function getTwoTimeDiff(start, end) {
+            var startTime = new Date();
+            var endTime = new Date();
+
+            s = start.split(':');
+            e = end.split(':');
+            startTime.setHours(s[0]);
+            startTime.setMinutes(s[1]);
+            startTime.setSeconds(0);
+
+            endTime.setHours(e[0]);
+            endTime.setMinutes(e[1]);
+            endTime.setSeconds(0);
+            var diff = endTime - startTime;
+            diff = ((diff / 1000) / 60) / 60;
+            diff = diff.toFixed(2);
+
+            return diff;
+        }
+        function decimalToTime(decimal, separator) {
+            if ((decimal % 1) === 0) {
+                decimal = parseInt(decimal);
+                return (twoDigit(decimal) + ":" + "00");
+
+            }
+            else {
+                a = decimal.split(separator);
+                var newdecimal = a[0] + "." + a[1];
+                var hour = Math.floor(newdecimal);
+                var min = Math.round((newdecimal * 60) % 60);
+
+                return (twoDigit(hour) + ":" + twoDigit(min));
+            }
+        }
+        function timeToDecimal(time,separator) {
+            a = time.split(":");
+            var min = (a[0] * 60) + (a[1] * 1);
+            var decimal = (min / 60).toFixed(2);
+            a = decimal.split(".");
+
+            return (a[0] + separator + a[1]);
+        }
+        function commaToDot(decimal) {
+            a = decimal.split(",");
+            return (a[0] + "." + a[1]);
+        }
+
+
+        $("#C_WHOUR").keyup(function () {
+
+            $("#C_END_TIME").attr("disabled", true);
+            $("#C_END_TIME").val("");
+        });
+        $("#div_c_whour").click(function () {
+            $("#C_WHOUR").attr("disabled", false);
+            $("#C_END_TIME").attr("disabled", true);
+            $("#C_END_TIME").val("");
+        });
+        $("#div_c_end_time").click(function () {
+            $("#C_WHOUR").attr("disabled", true);
+            $("#C_END_TIME").attr("disabled", false);
+        });
+
+
+        $(document).ready(function () {
+
+            var allProject = $('#selectProject').html();
+            $("#selectCustomer").change(function () {
+                var selectedCustomer = $("#selectCustomer option:selected").prop("class");
+
+                if (selectedCustomer != "all")
+                    $("#selectProject").attr("disabled", false);
+                else
+                    $("#selectProject").attr("disabled", true);
+
+                $("#selectProject").html(allProject);
+                if (selectedCustomer == "all") return;
+                $("#selectProject option").each(function () {
+                    if (!$(this).hasClass(selectedCustomer)) {
+                        $(this).remove();
+                    }
+                });
+                //$('#selectProject :not([class^="' + selectedCustomer + '"])').remove();
+            });
+
+            var e_AllProject = $('#PROJECT_NUMBER').html();
+            $("#e_selectCustomer").change(function () {
+                var selectedCustomer = $("#e_selectCustomer option:selected").prop("class");
+
+                if (selectedCustomer != "all")
+                    $("#PROJECT_NUMBER").attr("disabled", false);
+                else
+                    $("#PROJECT_NUMBER").attr("disabled", true);
+
+                $("#PROJECT_NUMBER").html(e_AllProject);
+                if (selectedCustomer == "all") return;
+                $("#PROJECT_NUMBER option").each(function () {
+                    if (!$(this).hasClass(selectedCustomer)) {
+                        $(this).remove();
+                    }
+                });
+            });
+
+            var AllFilterProject = $('#filterProject').html();
+            $("#filterCustomer").change(function () {
+                var selectedFilterCustomer = $("#filterCustomer option:selected").prop("class");
+                $("#filterProject").html(AllFilterProject);
+                if (selectedFilterCustomer == "all") return;
+                $("#filterProject option").each(function () {
+                    if (!$(this).hasClass(selectedFilterCustomer)) {
+                        $(this).remove();
+                    }
+                });
+            });
+        });
+
+        var exportDate = new Date();
+        var tableexport = $('#tb').tableExport({
+            headers: true,
+            footers: false,
+            formats: ["xlsx"],
+            filename: "Aktiviteler " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear(),
+            bootstrap: true,
+            exportButtons: false,
+            position: "top",
+            ignoreRows: null,
+            ignoreCols: [0, 1, 19],
+            trimWhitespace: true,
+            RTL: false,
+            sheetname: "Aktiviteler " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear(),
+
+        });
+        var table = $('#tb').DataTable({
+            "columnDefs": [
+                { "orderable": false, "targets": [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 19] }
+            ],
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "order": [[12, "desc"], [1, "desc"]],
+            language: {
+                info: "_TOTAL_ kayıttan _START_ - _END_ kayıt gösteriliyor.",
+                infoEmpty: "Gösterilecek hiç kayıt yok.",
+                loadingRecords: "Kayıtlar yükleniyor.",
+                zeroRecords: "Tablo boş",
+                search: "Arama:",
+                infoFiltered: "(toplam _MAX_ kayıttan filtrelenenler)",
+                lengthMenu: "Sayfada _MENU_ Kayıt Göster",
+                paginate: {
+                    first: "İlk",
+                    previous: "Önceki",
+                    next: "Sonraki",
+                    last: "Son"
+                },
+            },
+
+        });
+
+        $("#filterCustomer").on("change", function () {
+            var filter = $(this).children("option:selected").val();
+
+            if (filter == "all") {
+                filter = "";
+                $("#filterCustomer").val("all")
+            }
+
+            table.columns(2).search(filter).draw();
+        });
+
+        $("#filterProject").on("change", function () {
+            var filter = $(this).children("option:selected").val();
+
+            if (filter == "Hepsi")
+                filter = "";
+
+            table.columns(3).search(filter).draw();
+        });
+
+        $("#filterEmployee").on("change", function () {
+            var filter = $(this).children("option:selected").val();
+
+            if (filter == "Hepsi")
+                filter = "";
+
+            table.columns(4).search(filter).draw();
+        });
+
+        $("#filterCreatedEmployee").on("change", function () {
+            var filter = $(this).children("option:selected").val();
+
+            if (filter == "Hepsi")
+                filter = "";
+
+            table.columns(5).search(filter).draw();
+        });
+
+        $("#filterStatus").on("change", function () {
+            var filter = $(this).children("option:selected").val();
+
+            if (filter == "Hepsi")
+                filter = "";
+
+            table.columns(6).search(filter).draw();
+        });
+
+        $("#filterPriority").on("change", function () {
+            var filter = $(this).children("option:selected").val();
+
+            if (filter == "Hepsi")
+                filter = "";
+
+            table.columns(7).search(filter).draw();
+        });
+
+        $("#filterInvoice").on("change", function () {
+            var filter = $(this).children("option:selected").val();
+
+            if (filter == "Hepsi")
+                filter = "";
+
+            table.columns(8).search(filter).draw();
+        });
+
+        $("#filterLocation").on("change", function () {
+            var filter = $(this).children("option:selected").val();
+
+            if (filter == "Hepsi")
+                filter = "";
+
+            table.columns(9).search(filter).draw();
+        });
+
+        $("#searchDetail").on("keyup", function () {
+            var search = $(this).val();
+
+            table.columns(11).search(search).draw();
+        });
+        $("#btnFilterActivityDate").on("click", function () {
+            var from = $("#fromActivityDate").val();
+            var to = $("#toActivityDate").val();
+
+            var f = from.split('.');
+            var t = to.split('.');
+
+            var day = 1000 * 60 * 60 * 24;
+            var fromDate = new Date(f[2], f[1], f[0]);
+            var toDate = new Date(t[2], t[1], t[0]);
+            var allDate = [];
+            var diff = (toDate.getTime() - fromDate.getTime()) / day;
+            for (var i = 0; i <= diff; i++) {
+                var xx = fromDate.getTime() + day * i;
+                var yy = new Date(xx);
+                var d = yy.getDate();
+                var m = yy.getMonth();
+
+                if (d < 10)
+                    d = "0" + d;
+                if (m < 10)
+                    m = "0" + m;
+
+                allDate.push(d + "." + m + "." + yy.getFullYear());
+            }
+
+            table.columns(12).search(allDate.join("|"), true, false, true).draw();
+        });
+
+        $("#btnFilterCreateDate").on("click", function () {
+            var from = $("#fromCreateDate").val();
+            var to = $("#toCreateDate").val();
+
+            var f = from.split('.');
+            var t = to.split('.');
+
+            var day = 1000 * 60 * 60 * 24;
+            var fromDate = new Date(f[2], f[1], f[0]);
+            var toDate = new Date(t[2], t[1], t[0]);
+            var allDate = [];
+            var diff = (toDate.getTime() - fromDate.getTime()) / day;
+            for (var i = 0; i <= diff; i++) {
+                var xx = fromDate.getTime() + day * i;
+                var yy = new Date(xx);
+                var d = yy.getDate();
+                var m = yy.getMonth();
+
+                if (d < 10)
+                    d = "0" + d;
+                if (m < 10)
+                    m = "0" + m;
+
+                allDate.push(d + "." + m + "." + yy.getFullYear());
+            }
+
+            table.columns(16).search(allDate.join("|"), true, false, true).draw();
+        });
+
+        $("#btnResetActivityDateFilter").click(function () {
+            $("#fromActivityDate").val('');
+            $("#toActivityDate").val('');
+            table.columns(12).search('').draw();
+        });
+        $("#btnResetCreateyDateFilter").click(function () {
+            $("#fromCreateDate").val('');
+            $("#toCreateDate").val('');
+            table.columns(16).search('').draw();
+        });
+
+        $("#resetAllFilter").click(function () {
+            $("#fromCreateDate").val('');
+            $("#toCreateDate").val('');
+            $("#fromActivityDate").val('');
+            $("#toActivityDate").val('');
+            $("#filterCustomer").val('all');
+            $("#filterProject").val('Hepsi');
+            $("#filterEmployee").val('Hepsi');
+            $("#filterCreatedEmployee").val('Hepsi');
+            $("#filterStatus").val('Hepsi');
+            $("#filterPriority").val('Hepsi');
+            $("#filterInvoice").val('Hepsi');
+            $("#filterLocation").val('Hepsi');
+            $("#searchDetail").val('');
+            table.columns('').search('').draw();
+        });
+
+
+        function AddRow(id, emp) {
+            var customer = $("#selectCustomer option:selected").text();
+            var customerId = $("#selectCustomer option:selected").attr("class");
+            var customerHTML = "<td id=\"" + id + "-customer\" data-id=\"" + customerId + "\">" + customer + "</td>";
+
+            var project = $("#selectProject option:selected").text();
+            var projectId = $("#selectProject option:selected").val();
+            var projectHTML = "<td id=\"" + id + "-project\" class=\"tableexport-string\" data-id=\"" + projectId + "\">" + project + "</td>";
+
+            var empId = $("#selectEmployee option:selected").val();
+            var empHTML = "<td id=\"" + id + "-emp\" data-id=\"" + empId + "\" class=\"tableexport-string\">" + emp + "</td>";
+
+            var creatorHTML = "<td id=\"" + id + "-creator\" class=\"tableexport-string\" data-id=\"" + empId + "\">" + emp + "</td>";
+
+            var status = "<td id=\"" + id + "-status\" class=\"tableexport-string\">Aktif</td>";
+
+            var priority = "<td id=\"" + id + "-priority\" class=\"tableexport-string\" data-id=\"3\">NORMAL</td>";
+
+            var invoice = $("#c_invoice option:selected").text();
+            var invoiceHTML = "<td id=\"" + id + "-invoice\" class=\"tableexport-string\">" + invoice + "</td>";
+
+            var location = $("#c_location option:selected").text();
+            var locationHTML = "<td id=\"" + id + "-location\" class=\"tableexport-string\">" + location + "</td>";
+
+            var reference = $("#c_reference").val();
+            var referenceHTML = "<td id=\"" + id + "-reference\" class=\"tableexport-string\">" + reference + "</td>";
+
+            var date = $("#c_activity_date").val();
+            var dateHTML = "<td id=\"" + id + "-estStart\" class=\"tableexport-string\">" + date + "</td>";
+
+            var start = $("#C_START_TIME").val();
+            var startHTML = "<td id=\"" + id + "-start\" class=\"tableexport-string\">" + start + ":00</td>";
+
+            var end = $("#C_END_TIME").val();
+            var endHTML = "<td id=\"" + id + "-end\" class=\"tableexport-string\">" + end + ":00</td>";
+
+            var whour = $("#c_hideWhour").val();
+            var whourHTML = "<td id=\"" + id + "-whour\" class=\"tableexport-string\">" + commaToDot(whour)+ "</td>";
+
+            var hrMinWhour = decimalToTime(whour, ",");
+            var hrMinWhourHTML = "<td id=\"" + id + "-whour2\" class=\"tableexport-string\">" + hrMinWhour + "</td>";
+
+            var iCustomerName = $("#c_iCustomerName").val();
+            var iCustomerNameHTML = "<td id=\"" + id + "-iCustomerName\" class=\"tableexport-string\">" + iCustomerName + "</td>";
+
+
+            var detail = $("#c_detail").val();
+            var detailHTML = "";
+
+            if (detail.length > 40) {
+                detailHTML = "<td id=\"" + id + "-detail\" class=\"tableexport-string\"><div id=\"module\" class=\"container\">" +
+                    "<p style=\"margin:0px!important\" class=\"collapse read-more\" id=\"collapseExample-" + id + "\" aria-expanded=\"false\">" + detail
+                    + "</p><a role=\"button\" class=\"collapsed\" data-toggle=\"collapse\" href=\"#collapseExample-" + id + "\"" +
+                    " style=\"font-size:small\" aria-expanded=\"false\" aria-controls=\"collapseExample-" + id + "\"></a></div></td>";
+            }
+            else {
+                detailHTML = "<td id=\"" + id + "-detail\" class=\"tableexport-string\">" + detail + "</td>";
+            }
+
+            var createDate = "<td class=\"tableexport-string\">" + "@currentDate" + "</td>";
+
+            var delHTML = "<td><button type=\"button\" class=\"btn btn-outline-danger viewModelDel\" data-toggle=\"modal\" data-target=\"#delete\" data-id=\"" + id + "\"><i class=\"fas fa-trash\"></i></button></td>";
+            var editHTML = "<td><button type=\"button\" data-id=\"" + id + "\" data-toggle=\"modal\" data-target=\"#edit\" class=\"btn btn-outline-primary fBtnEdit\"><i class=\"far fa-edit\"></i></button></td>";
+
+            var newRow = '<tr id=\"' + id + '\">' + editHTML + '<td>' + id + '</td>' + customerHTML + projectHTML + empHTML + creatorHTML + status + priority +
+                invoiceHTML + locationHTML + referenceHTML + detailHTML + dateHTML + startHTML + endHTML + whourHTML + hrMinWhourHTML + createDate + iCustomerNameHTML + delHTML + '</tr>';
+            var rowNode = table.row.add($(newRow)[0]).draw().node();
+            $(rowNode)
+                .css('color', 'green')
+                .animate({ color: 'black' });
+
+        }
+
+        function EditRow(id) {
+            var customer = $("#e_selectCustomer option:selected").text();
+            var customerId = $("#e_selectCustomer option:selected").val();
+            var project = $("#PROJECT_NUMBER option:selected").text();
+            var projectId = $("#PROJECT_NUMBER option:selected").val();
+            var emp = $("#CREATOR option:selected").text();
+            var empId = $("#CREATOR option:selected").val();
+            var status = "Aktif";
+            var priority = "NORMAL";
+            var invoice = $("#INVOICE option:selected").text();
+            var location = $("#LOCATION option:selected").text();
+            var reference = $("#REFERENCE_NO").val();
+            var date = $("#ACTIVITY_DATE").val();
+            var start = $("#START_TIME").val();
+            var end = $("#END_TIME").val();
+            var whour = $("#hideWhour").val();
+            var hrMinWhour = decimalToTime(whour, ",");
+            var detail = $("#DETAIL").val();
+            var rowIndex = table.row('#' + id).index();
+            var iCustomerName = $("#IndirectCustomerName").val();
+
+
+            table.cell({ row: rowIndex, column: 2 }).data(customer).draw();
+
+            $("#" + id + "-customer", "#tb").attr("data-id", customerId);
+
+            table.cell({ row: rowIndex, column: 3 }).data(project).draw();
+            $("#" + id + "-project", "#tb").attr("data-id", projectId);
+
+            table.cell({ row: rowIndex, column: 4 }).data(emp).draw();
+            $("#" + id + "-emp", "#tb").attr("data-id", empId);
+
+            table.cell({ row: rowIndex, column: 5 }).data(emp).draw();
+            $("#" + id + "-creator", "#tb").attr("data-id", empId);
+
+            table.cell({ row: rowIndex, column: 8 }).data(invoice).draw();
+
+            table.cell({ row: rowIndex, column: 9 }).data(location).draw();
+
+            table.cell({ row: rowIndex, column: 10 }).data(reference).draw();
+
+            table.cell({ row: rowIndex, column: 11 }).data(detail).draw();
+
+            table.cell({ row: rowIndex, column: 12 }).data(date).draw();
+
+            table.cell({ row: rowIndex, column: 13 }).data(start).draw();
+
+            table.cell({ row: rowIndex, column: 14 }).data(end).draw();
+
+            table.cell({ row: rowIndex, column: 15 }).data(commaToDot(whour)).draw();
+
+            table.cell({ row: rowIndex, column: 16 }).data(hrMinWhour).draw();
+
+            table.cell({ row: rowIndex, column: 18 }).data(iCustomerName).draw();
+
+            tableexport.reset();
+        }
+
+        $("body").on("click", "#tb .viewModelDel", function () {
+            var id = $(this).data("id");
+            $("#btnDelete").val(id);
+            document.getElementById("IdDel").value = id;
+        });
+
+        $("#BtnCreate").click(function () {
+            $("#BtnCreate").attr("disabled", true);
+            $("#C_WHOUR").attr("disabled", false);
+            var whour = $("#C_WHOUR").val();
+            var decimal = timeToDecimal(whour, ",");
+            $("#c_hideWhour").val(decimal);
+
+
+            $("#createForm").ajaxSubmit({
+                url: '/Activity/Create',
+                type: 'post',
+                success: function (result) {
+                    if (result.status) {
+                        showCreateAlert();
+                        AddRow(result.id, result.name);
+                        $("#create").modal("toggle");
+						document.getElementById("createForm").reset();
+						window.location.reload();
+                    }
+                    else
+                        showAlert2(result.error);
+                    $("#BtnCreate").attr("disabled", false);
+                }
+            })
+        });
+
+        $("#btnDelete").click(function () {
+            var id = $(this).val();
+            $("#formDelete").ajaxSubmit({
+                url: '/Activity/Delete',
+                type: 'post',
+                success: function (result) {
+                    if (result.status) {
+                        table.row("#" + id).remove().draw();
+                        $("#delete").modal("toggle");
+						tableexport.reset();
+						window.location.reload();
+                    }
+                    else
+                        showAlert();
+                }
+            })
+        });
+
+
+        $("body").on("click", "#tb .fBtnEdit", function () {
+            var id = $(this).data("id");
+            $("#BtnEdit").val(id);
+            var project = $("#" + id + "-project", "#tb").data("id");
+            var invoice = $("#" + id + "-invoice", "#tb").html();
+            var emp = $("#" + id + "-emp", "#tb").data("id");
+            var creator = $("#" + id + "-creator", "#tb").data("id");
+            //var priority = $("#" + id + "-priority", "#tb").data("id");
+            var detail = $("#" + id + "-detail", "#tb").text();
+            var actDate = $("#" + id + "-estStart", "#tb").html();
+            var start = $("#" + id + "-start", "#tb").html();
+            var end = $("#" + id + "-end", "#tb").html();
+            //var status = $("#" + id + "-status", "#tb").html();
+            var whour = $("#" + id + "-whour", "#tb").html();
+            var location = $("#" + id + "-location", "#tb").html();
+            var customer = $("#" + id + "-customer", "#tb").data("id");
+            var reference = $("#" + id + "-reference", "#tb").html();
+            var iCustomerName = $("#" + id + "-iCustomerName", "#tb").html();
+
+            if (invoice == "Evet")
+                invoice = true;
+            else if (invoice == "Hayır")
+                invoice = false;
+
+            document.getElementById("activtyID").value = id;
+            document.getElementById("PROJECT_NUMBER").value = project;
+            document.getElementById("CREATOR").value = creator;
+            document.getElementById("INVOICE").value = invoice;
+            //document.getElementById("ACTIVITY_PRIORITY").value = priority;
+            document.getElementById("DETAIL").value = $.trim(detail);
+            //document.getElementById("STATUS").value = status;
+            document.getElementById("ACTIVITY_DATE").value = actDate;
+            document.getElementById("START_TIME").value = start;
+            document.getElementById("END_TIME").value = end;
+            document.getElementById("WHOUR").value = decimalToTime(whour, ".");
+            document.getElementById("LOCATION").value = location;
+            document.getElementById("e_selectCustomer").value = customer;
+            document.getElementById("REFERENCE_NO").value = reference;
+            document.getElementById("IndirectCustomerName").value = iCustomerName;
+        });
+
+        $("#BtnEdit").click(function () {
+            var id = $(this).val();
+            $("#WHOUR").attr("disabled", false);
+
+            var whour = $("#WHOUR").val();
+            var decimal = timeToDecimal(whour, ",");
+            $("#hideWhour").val(decimal);
+
+            var selectedCustomer = $("#e_selectCustomer option:selected").prop("class");
+            if (selectedCustomer != "all")
+                $("#PROJECT_NUMBER").attr("disabled", false);
+
+            $("#editForm").ajaxSubmit({
+                url: '/Activity/Edit', type: 'post',
+                success: function (result) {
+                    if (result.status) {
+                        $("#edit").modal("toggle");
+                        showEditAlert();
+                        EditRow(id);
+						document.getElementById("editForm").reset();
+						window.location.reload();
+                    }
+                    else
+                        showAlert2(result.error);
+                }
+            })
+        });
+
+        $('.datePicker').datetimepicker({
+            format: 'DD.MM.YYYY',
+        });
+
+        $('.selectpicker').selectpicker({
+            noneSelectedText: 'Seçim Yapılmadı',
+            selectAllText: 'Tümü',
+            deselectAllText: 'Hiçbiri',
+            size: 'auto',
+
+        });
+
+        function setInputFilter(textbox, inputFilter) {
+            ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+                textbox.addEventListener(event, function () {
+                    if (inputFilter(this.value)) {
+                        this.oldValue = this.value;
+                        this.oldSelectionStart = this.selectionStart;
+                        this.oldSelectionEnd = this.selectionEnd;
+                    } else if (this.hasOwnProperty("oldValue")) {
+                        this.value = this.oldValue;
+                        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                    } else {
+                        this.value = "";
+                    }
+                });
+            });
+        };
+
+
+	</script>
+
+	<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
+}
+

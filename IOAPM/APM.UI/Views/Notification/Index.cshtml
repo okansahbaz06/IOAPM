@@ -1,0 +1,259 @@
+﻿@model IEnumerable<APM.Repository.Dto.NotificationDto>
+@{
+    ViewData["Title"] = "Duyurular";
+}
+
+<div class="ecommerce-widget">
+
+    <div class="row" style="justify-content: center;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Duyurular </h2>
+            </div>
+        </div>
+        <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Duyurular - </h5>
+                <button class="btn btn-outline-success" data-toggle="modal" data-target="#create">Yeni Duyuru Ekle</button>
+                <div class="text-center table-responsive">
+                    <div class="card-body p-0">
+                        <div class="table-hover">
+                            <table class="table" id="tb">
+                                <thead class="bg-light">
+                                    <tr class="border-0">
+                                        <th class="border-0">#</th>
+                                        <th class="border-0">Duyuru İçeriği</th>
+                                        <th class="border-0">Başlangıç Tarihi</th>
+                                        <th class="border-0">Bitiş Tarihi</th>
+                                        <th class="border-0">Düzenle</th>
+                                        <th class="border-0">Sil</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Count() == 0)
+                                    {
+                                        <tr>
+                                            <td colspan="6">
+                                                Duyuru Bulunmamaktadır.
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@item.ID</td>
+                                                <td id="@item.ID-text">@item.TEXT_INFO</td>
+                                                <td id="@item.ID-start">@item.START_TIME.ToString("dd/MM/yyyy")</td>
+                                                <td id="@item.ID-end">@item.END_TIME?.ToString("dd/MM/yyyy")</td>
+                                                <td>
+                                                    <button class="btn btn-outline-primary viewModel" data-toggle="modal" data-target="#edit" data-name="@item.ID" data-id="@item.ID">Düzenle</button>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-outline-danger viewModelDel" data-toggle="modal" data-target="#delete" data-id="@item.ID">Sil</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> @*Database ----------------------*@
+
+</div>
+
+
+
+<!----------  Modals ---------------------------->
+<!-- Delete -->
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Duyuru Sil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="Delete" method="post" role="form">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-group">
+                            Silmek istediğinize emin misiniz ?
+                            <input type="hidden" id="notifiIdDel" value="" name="id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-danger" asp-action="Delete">Sil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Create -->
+<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Yeni Duyuru</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="createForm" role="form">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Duyuru içerği</label>
+                            <textarea name="TEXT_INFO" class="form-control" placeholder="Duyuru İçeriği" style="margin-top: 0px; margin-bottom: 0px; height: 119px;"></textarea>
+                        </div>
+                        <div class="form-group ">
+                            <label>Başlangıç Tarihi</label>
+                            <div class="input-group date datePicker" id="mydatetimepicker1" data-target-input="nearest">
+                                <input type="text" value="" class="form-control datetimepicker-input" data-target="#mydatetimepicker1" name="START_TIME">
+                                <div class="input-group-append" data-target="#mydatetimepicker1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label>Bitiş Tarihi</label>
+                            <div class="input-group date datePicker" id="mydatetimepicker2" data-target-input="nearest">
+                                <input type="text" value="" class="form-control datetimepicker-input" data-target="#mydatetimepicker2" name="END_TIME">
+                                <div class="input-group-append" data-target="#mydatetimepicker2" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button id="btnCreate" type="button" class="btn btn-success">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit -->
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Düzenle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editForm" role="form">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="hidden" name="Id" id="notifiId" value="" />
+                        </div>
+                        <div class="form-group">
+                            <label>Duyuru İçeriği</label>
+                            <textarea name="TEXT_INFO" class="form-control" autocomplete="off" data-parsley-maxlength="100" placeholder="Duyuru İçeriği" id="textInfo" style="margin-top: 0px; margin-bottom: 0px; height: 119px;"></textarea>
+                        </div>
+                        <div class="form-group ">
+                            <label>Başlangıç Tarihi</label>
+                            <div class="input-group date datePicker" id="mydatetimepicker3" data-target-input="nearest">
+                                <input type="text" value="" class="form-control datetimepicker-input" data-target="#mydatetimepicker3" name="START_TIME" id="notifiStartDate">
+                                <div class="input-group-append" data-target="#mydatetimepicker3" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label>Bitiş Tarihi</label>
+                            <div class="input-group date datePicker" id="mydatetimepicker4" data-target-input="nearest">
+                                <input type="text" value="" class="form-control datetimepicker-input" data-target="#mydatetimepicker4" name="END_TIME" id="notifiEndDate">
+                                <div class="input-group-append" data-target="#mydatetimepicker4" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-success" id="btnEdit">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+    <script>
+        $(".viewModel").click(function () {
+            var id = $(this).data("id");
+            var start = $("#" + id + "-start", "#tb").html();
+            var end = $("#" + id + "-end", "#tb").html();
+            var text = $("#" + id + "-text", "#tb").html();
+
+            document.getElementById("notifiId").value = id;
+            document.getElementById("textInfo").value = text;
+            document.getElementById("notifiStartDate").value = start;
+            document.getElementById("notifiEndDate").value = end;
+        });
+
+        $(".viewModelDel").click(function () {
+            var id = $(this).data("id");
+            document.getElementById("notifiIdDel").value = id;
+        });
+
+        $("#btnCreate").click(function () {
+            $("#createForm").ajaxSubmit({
+                url: '/Notification/Create',
+                type: 'post',
+                success: function (result) {
+                    if (result.status) {
+                        showCreateAlert();
+                    }
+                    else {
+                        if (result.error == "null")
+                            showAlert2(result.text);
+                        else if (result.error == "any")
+                            showAlert();
+                    }
+                }
+            });
+        });
+
+        $('.datePicker').datetimepicker({
+            format: 'DD.MM.YYYY',
+        });
+
+        $("#btnEdit").click(function () {
+            $("#editForm").ajaxSubmit({
+                url: '/Notification/Edit',
+                type: 'post',
+                success: function (result) {
+                    if (result.status) {
+                        showCreateAlert();
+                    }
+                    else {
+                        if (result.error == "null")
+                            showAlert2(result.text);
+                        else if (result.error == "any")
+                            showAlert();
+                    }
+                }
+            })
+        });
+    </script>
+}
+

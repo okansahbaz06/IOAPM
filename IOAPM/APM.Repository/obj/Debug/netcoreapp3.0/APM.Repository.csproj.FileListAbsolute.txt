@@ -1,0 +1,122 @@
+C:\Users\Cosmos\source\repos\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.deps.json
+C:\Users\Cosmos\source\repos\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.dll
+C:\Users\Cosmos\source\repos\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.pdb
+C:\Users\Cosmos\source\repos\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csprojAssemblyReference.cache
+C:\Users\Cosmos\source\repos\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfoInputs.cache
+C:\Users\Cosmos\source\repos\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfo.cs
+C:\Users\Cosmos\source\repos\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.dll
+C:\Users\Cosmos\source\repos\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.pdb
+C:\Users\Cosmos\source\repos\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.dll
+C:\Users\Cosmos\source\repos\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.pdb
+C:\Users\Cosmos\source\repos\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CopyComplete
+C:\Users\Cosmos\source\repos\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.json
+C:\Users\Cosmos\source\repos\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.dev.json
+C:\Users\Cosmos\source\repos\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.genruntimeconfig.cache
+C:\Users\Cosmos\source\repos\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CoreCompileInputs.cache
+D:\APM DENEME\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.deps.json
+D:\APM DENEME\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.json
+D:\APM DENEME\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.dev.json
+D:\APM DENEME\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.dll
+D:\APM DENEME\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.pdb
+D:\APM DENEME\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.dll
+D:\APM DENEME\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.pdb
+D:\APM DENEME\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.AssemblyReference.cache
+D:\APM DENEME\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.GeneratedMSBuildEditorConfig.editorconfig
+D:\APM DENEME\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfoInputs.cache
+D:\APM DENEME\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfo.cs
+D:\APM DENEME\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CoreCompileInputs.cache
+D:\APM DENEME\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.dll
+D:\APM DENEME\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.pdb
+D:\APM DENEME\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.genruntimeconfig.cache
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.deps.json
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.json
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.dev.json
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.dll
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.pdb
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.dll
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.pdb
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csprojAssemblyReference.cache
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfoInputs.cache
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfo.cs
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CoreCompileInputs.cache
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CopyComplete
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.dll
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.pdb
+C:\Users\Cosmos\Downloads\APM_V004\APM_V004\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.genruntimeconfig.cache
+D:\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.deps.json
+D:\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.json
+D:\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.dev.json
+D:\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.dll
+D:\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.pdb
+D:\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.dll
+D:\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.pdb
+D:\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.AssemblyReference.cache
+D:\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.GeneratedMSBuildEditorConfig.editorconfig
+D:\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfoInputs.cache
+D:\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfo.cs
+D:\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CoreCompileInputs.cache
+D:\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.dll
+D:\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.pdb
+D:\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.genruntimeconfig.cache
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.deps.json
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.json
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.dev.json
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.dll
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.pdb
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.dll
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.pdb
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csprojAssemblyReference.cache
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfoInputs.cache
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfo.cs
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CoreCompileInputs.cache
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CopyComplete
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.dll
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.pdb
+C:\Users\Cosmos\Desktop\APM_V007_Duyuru\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.genruntimeconfig.cache
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.deps.json
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.json
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.dev.json
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.dll
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.pdb
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.dll
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.pdb
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csprojAssemblyReference.cache
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfoInputs.cache
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfo.cs
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CoreCompileInputs.cache
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CopyComplete
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.dll
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.pdb
+C:\Users\Cosmos\Desktop\APM_12062022\APM_V006\APM_V006\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.genruntimeconfig.cache
+D:\APM_16.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.deps.json
+D:\APM_16.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.json
+D:\APM_16.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.dev.json
+D:\APM_16.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.dll
+D:\APM_16.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.pdb
+D:\APM_16.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.dll
+D:\APM_16.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.pdb
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.AssemblyReference.cache
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.GeneratedMSBuildEditorConfig.editorconfig
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfoInputs.cache
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfo.cs
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CoreCompileInputs.cache
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CopyComplete
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.dll
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.pdb
+D:\APM_16.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.genruntimeconfig.cache
+D:\APM_17.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.deps.json
+D:\APM_17.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.json
+D:\APM_17.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.runtimeconfig.dev.json
+D:\APM_17.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.dll
+D:\APM_17.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Repository.pdb
+D:\APM_17.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.dll
+D:\APM_17.06.2022\APM\APM.Repository\bin\Debug\netcoreapp3.0\APM.Entities.pdb
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.AssemblyReference.cache
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.GeneratedMSBuildEditorConfig.editorconfig
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfoInputs.cache
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.AssemblyInfo.cs
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CoreCompileInputs.cache
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.csproj.CopyComplete
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.dll
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.pdb
+D:\APM_17.06.2022\APM\APM.Repository\obj\Debug\netcoreapp3.0\APM.Repository.genruntimeconfig.cache

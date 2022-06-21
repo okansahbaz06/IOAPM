@@ -1,0 +1,9 @@
+C:\Users\Cosmos\source\repos\APM\APM.Entities\bin\Debug\netcoreapp3.1\APM.Entities.deps.json
+C:\Users\Cosmos\source\repos\APM\APM.Entities\bin\Debug\netcoreapp3.1\APM.Entities.dll
+C:\Users\Cosmos\source\repos\APM\APM.Entities\bin\Debug\netcoreapp3.1\APM.Entities.pdb
+C:\Users\Cosmos\source\repos\APM\APM.Entities\obj\Debug\netcoreapp3.1\APM.Entities.csprojAssemblyReference.cache
+C:\Users\Cosmos\source\repos\APM\APM.Entities\obj\Debug\netcoreapp3.1\APM.Entities.AssemblyInfoInputs.cache
+C:\Users\Cosmos\source\repos\APM\APM.Entities\obj\Debug\netcoreapp3.1\APM.Entities.AssemblyInfo.cs
+C:\Users\Cosmos\source\repos\APM\APM.Entities\obj\Debug\netcoreapp3.1\APM.Entities.csproj.CoreCompileInputs.cache
+C:\Users\Cosmos\source\repos\APM\APM.Entities\obj\Debug\netcoreapp3.1\APM.Entities.dll
+C:\Users\Cosmos\source\repos\APM\APM.Entities\obj\Debug\netcoreapp3.1\APM.Entities.pdb

@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Http.Features
+
+@{
+    var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
+    var showBanner = !consentFeature?.CanTrack ?? false;
+    var cookieString = consentFeature?.CreateConsentCookie();
+}
+<style>
+    .cookieAlert {
+        position: fixed;
+        left: 50%;
+        width: 400px;
+        margin-left: -200px;
+        text-align: center;
+        outline: 9999px solid rgba(0,0,0,0.2);
+        z-index: 999999;
+        border-radius: 0px;
+        opacity: 0.9;
+        padding-right: inherit;
+    }
+</style>
+@if (showBanner)
+{
+    <div id="cookieConsent" class="alert alert-info alert-dismissible fade show cookieAlert" role="alert">
+        Çerezleri kabul ediyor musunuz ?
+        <button type="button" class="accept-policy btn btn-outline-primary" data-dismiss="alert" aria-label="Close" data-cookie-string="@cookieString">
+            <span aria-hidden="true">Kabul Et</span>
+        </button>
+    </div>
+    <script>
+        (function () {
+            var button = document.querySelector("#cookieConsent button[data-cookie-string]");
+            button.addEventListener("click", function (event) {
+                document.cookie = button.dataset.cookieString;
+            }, false);
+        })();
+    </script>
+}

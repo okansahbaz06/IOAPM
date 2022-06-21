@@ -1,0 +1,443 @@
+﻿@model APM.Repository.Dto.SendEmailDto
+@{
+    ViewData["Title"] = "Mail Yönetimi";
+}
+<style>
+    .custom-control-label {
+        line-height: inherit;
+    }
+</style>
+<div class="ecommerce-widget">
+
+    <div class="row" style="justify-content: center;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Mail Yönetimi</h2><hr>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 align-self-center">
+            <div class="card">
+                <h5 class="card-header">Mail Gönder</h5>
+                <div class="card-body">
+                    <div class="pills-vertical">
+                        <div class="row">
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    <a class="nav-link active show" id="v-pills-admins-tab" data-toggle="pill" href="#v-pills-admins" role="tab" aria-controls="v-pills-admins" aria-selected="true" style="border: solid;border-width: thin;">Yöneticiler</a>
+                                    <a class="nav-link" id="v-pills-employees-tab" data-toggle="pill" href="#v-pills-employees" role="tab" aria-controls="v-pills-employees" aria-selected="false" style="border: solid;border-width: thin;">Çalışanlar</a>
+                                    <a class="nav-link" id="v-pills-project-tab" data-toggle="pill" href="#v-pills-project" role="tab" aria-controls="v-pills-project" aria-selected="false" style="border: solid;border-width: thin;">Proje Çalışanları</a>
+                                    <a class="nav-link" id="v-pills-customers-tab" data-toggle="pill" href="#v-pills-customers" role="tab" aria-controls="v-pills-customers" aria-selected="false" style="border: solid;border-width: thin;">Müşteriler</a>
+                                </div>
+                            </div>
+                            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12 ">
+                                <div class="tab-content" id="v-pills-tabContent" style="border: solid;border-width: thin;">
+                                    @*1.*@  <div class="tab-pane fade active show" id="v-pills-admins" role="tabpanel" aria-labelledby="v-pills-admins-tab">
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="activityReminderAdmins-tab" data-toggle="tab" href="#activityReminderAdmins" role="tab" aria-controls="activityReminderAdmins" aria-selected="true">Aktivite Hatırlatma</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="specialAdmins-tab" data-toggle="tab" href="#specialAdmins" role="tab" aria-controls="specialAdmins" aria-selected="false">Özel</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" id="myTabContent">
+                                            <div class="tab-pane fade show active" id="activityReminderAdmins" role="tabpanel" aria-labelledby="activityReminderAdmins-tab">
+                                                <form id="formActivityReminderAdmins" role="form">
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Yönetici Seçiniz : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <select class="selectpicker" data-width="100%" data-live-search="true" multiple data-actions-box="true" name="employeesId">
+                                                                @foreach (var item in Model.Employees.Where(e => e.ROLE == Roles.ADMIN))
+                                                                {
+                                                                    <option value="@item.ID">@item.NAME @item.SURNAME</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <div class="col-12 col-sm-4"></div>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <label class="custom-control custom-radio">
+                                                                <input type="radio" name="isInput" value="true" checked="" class="custom-control-input"><span class="custom-control-label">Seçilenlere Gönder</span>
+                                                            </label>
+                                                            <label class="custom-control custom-radio custom-control-inline">
+                                                                <input type="radio" name="isInput" value="false" class="custom-control-input"><span class="custom-control-label">Bugün Aktivite Girişi Olmayanlara Gönder</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row text-right mt-5">
+                                                        <div class="col col-sm-10 col-lg-10 offset-sm-1 offset-lg-0">
+                                                            <button type="button" class="btn btn-space btn-outline-secondary" id="btnReminderAdmins">Gönder</button>
+                                                            <center><span id="waitingAdminReminder" class="dashboard-spinner spinner-secondary spinner-xs" style="display:none; margin-top:5px;"></span></center>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="tab-pane fade" id="specialAdmins" role="tabpanel" aria-labelledby="specialAdmins-tab">
+                                                <form id="formSpecialActivityReminderAdmins" role="form">
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Yönetici Seçiniz : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <select class="selectpicker" data-width="100%" data-live-search="true" multiple data-actions-box="true" name="id">
+                                                                @foreach (var item in Model.Employees.Where(e => e.ROLE == Roles.ADMIN))
+                                                                {
+                                                                    <option value="@item.ID">@item.NAME @item.SURNAME</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Konu : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <input name="subject" autocomplete="off" maxlength="30" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Başlık : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <input name="header" autocomplete="off" maxlength="30" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Içerik : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <textarea class="form-control" autocomplete="off" name="content" rows="3" style="margin-top: 0px; margin-bottom: 0px; height: 119px;"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row text-right mt-5">
+                                                        <div class="col col-sm-10 col-lg-10 offset-sm-1 offset-lg-0">
+                                                            <button type="button" class="btn btn-space btn-outline-secondary" id="btnSpecialReminderAdmins">Gönder</button>
+                                                            <center><span id="waitingSpecialAdminReminder" class="dashboard-spinner spinner-secondary spinner-xs" style="display:none; margin-top:5px;"></span></center>
+
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*2.*@  <div class="tab-pane fade" id="v-pills-employees" role="tabpanel" aria-labelledby="v-pills-employees-tab">
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="activityReminder-tab" data-toggle="tab" href="#activityReminder" role="tab" aria-controls="activityReminder" aria-selected="true">Aktivite Hatırlatma</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="special-tab" data-toggle="tab" href="#special" role="tab" aria-controls="special" aria-selected="false">Özel</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" id="myTabContent">
+                                            <div class="tab-pane fade show active" id="activityReminder" role="tabpanel" aria-labelledby="activityReminder-tab">
+                                                <form id="formActivityReminderEmployees" role="form">
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Çalısan Seçiniz : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <select class="selectpicker" data-width="100%" data-live-search="true" multiple data-actions-box="true" name="employeesId" id="selectAllEmployee">
+                                                                @foreach (var item in Model.Employees)
+                                                                {
+                                                                    <option value="@item.ID">@item.NAME @item.SURNAME</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <div class="col-12 col-sm-4"></div>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <label class="custom-control custom-radio">
+                                                                <input type="radio" name="isInput" value="true" checked="" class="custom-control-input"><span class="custom-control-label">Seçilenlere Gönder</span>
+                                                            </label>
+                                                            <label class="custom-control custom-radio custom-control-inline">
+                                                                <input type="radio" name="isInput" value="false" class="custom-control-input"><span class="custom-control-label">Bugün Aktivite Girişi Olmayanlara Gönder</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row text-right mt-5">
+                                                        <div class="col col-sm-10 col-lg-10 offset-sm-1 offset-lg-0">
+                                                            <button type="button" class="btn btn-space btn-outline-secondary" id="btnReminderEmployees">Gönder</button>
+                                                            <center><span id="waitingEmployeeReminder" class="dashboard-spinner spinner-secondary spinner-xs" style="display:none; margin-top:5px;"></span></center>
+
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="tab-pane fade" id="special" role="tabpanel" aria-labelledby="special-tab">
+                                                <form id="formSpecialActivityReminderEmployees" role="form">
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Çalısan Seçiniz : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <select class="selectpicker" data-width="100%" data-live-search="true" multiple data-actions-box="true" name="id">
+                                                                @foreach (var item in Model.Employees)
+                                                                {
+                                                                    <option value="@item.ID">@item.NAME @item.SURNAME</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+
+</div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Konu : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <input name="subject" autocomplete="off" maxlength="30" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Başlık : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <input name="header" autocomplete="off" maxlength="30" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-12 col-sm-4 col-form-label text-sm-right">Içerik : </label>
+                                                        <div class="col-12 col-sm-6 col-lg-6">
+                                                            <textarea class="form-control" autocomplete="off" name="content" rows="3" style="margin-top: 0px; margin-bottom: 0px; height: 119px;"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row text-right mt-5">
+                                                        <div class="col col-sm-10 col-lg-10 offset-sm-1 offset-lg-0">
+                                                            <button type="button" class="btn btn-space btn-outline-secondary" id="btnSpecialReminderEmployees">Gönder</button>
+                                                            <center><span id="waitingSpecialEmployeeReminder" class="dashboard-spinner spinner-secondary spinner-xs" style="display:none; margin-top:5px;"></span></center>
+
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*3.*@  <div class="tab-pane fade" id="v-pills-project" role="tabpanel" aria-labelledby="v-pills-project-tab">
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <form id="sendMailProject" role="form">
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Müşteri Seçiniz : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <select class="form-select" id="sendMailCustomers">
+                                                            <option class="all">Müşteri Seçiniz..</option>
+                                                            @foreach (var item in Model.Customers)
+                                                            {
+                                                                <option value="@item.ID" class="@item.ID">@item.NAME</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Proje Seçiniz : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <select class="form-select" id="sendMailProjects" name="projectId" disabled>
+                                                            @foreach (var item in Model.Projects)
+                                                            {
+                                                                <option value="@item.ID" class="@item.CUSTOMER_ID">@item.NAME</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Konu : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <input name="subject" autocomplete="off" maxlength="30" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Başlık : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <input name="header" autocomplete="off" maxlength="30" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Içerik : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <textarea class="form-control" autocomplete="off" name="content" rows="3" style="margin-top: 0px; margin-bottom: 0px; height: 119px;"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row text-right mt-5">
+                                                    <div class="col col-sm-10 col-lg-10 offset-sm-1 offset-lg-0">
+                                                        <button type="button" class="btn btn-space btn-outline-secondary" id="btnSendMailProject">Gönder</button>
+                                                        <center><span id="waitingProject" class="dashboard-spinner spinner-secondary spinner-xs" style="display:none; margin-top:5px;"></span></center>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    @*4.*@  <div class="tab-pane fade" id="v-pills-customers" role="tabpanel" aria-labelledby="v-pills-customers-tab">
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <form id="formSendMailCustomers">
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Müşteri Seçiniz : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <select class="selectpicker" data-width="100%" data-live-search="true" multiple data-actions-box="true" name="customerId">
+                                                            @foreach (var item in Model.Customers)
+                                                            {
+                                                                <option value="@item.ID">@item.NAME</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Konu : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <input name="subject" autocomplete="off" maxlength="30" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Başlık : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <input name="header" autocomplete="off" maxlength="30" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-12 col-sm-4 col-form-label text-sm-right">Içerik : </label>
+                                                    <div class="col-12 col-sm-6 col-lg-6">
+                                                        <textarea class="form-control" autocomplete="off" name="content" rows="3" style="margin-top: 0px; margin-bottom: 0px; height: 119px;"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row text-right mt-5">
+                                                    <div class="col col-sm-10 col-lg-10 offset-sm-1 offset-lg-0">
+                                                        <button type="button" class="btn btn-space btn-outline-secondary" id="btnSendMailCustomers">Gönder</button>
+                                                        <center><span id="waitingCustomer" class="dashboard-spinner spinner-secondary spinner-xs" style="display:none; margin-top:5px;"></span></center>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        var allProject = $('#sendMailProjects').html();
+        $("#sendMailCustomers").change(function () {
+            var selectedCustomer = $("#sendMailCustomers option:selected").prop("class");
+
+            if (selectedCustomer != "all")
+                $("#sendMailProjects").attr("disabled", false);
+            else
+                $("#sendMailProjects").attr("disabled", true);
+
+            $("#sendMailProjects").html(allProject);
+            if (selectedCustomer == "all") return;
+            $('#sendMailProjects :not([class^="' + selectedCustomer + '"])').remove();
+        });
+
+        $('.selectpicker').selectpicker({
+            noneSelectedText: 'Seçim Yapılmadı',
+            selectAllText: 'Tümü',
+            deselectAllText: 'Hiçbiri',
+            size: 'auto',
+        });
+
+        $('#btnReminderEmployees').click(function () {
+            $("#formActivityReminderEmployees").ajaxSubmit({
+                beforeSubmit: function () {
+                    $("#waitingEmployeeReminder").toggle("slow");
+                },
+                url: "/Transaction/sendMailAll",
+                type: "POST",
+                success: function (result) {
+                    $("#waitingEmployeeReminder").toggle("slow");
+                    if (result.status)
+                        showAlertSuccess("Mail Gönderilmiştir..");
+                    else
+                        showAlert2(result.error);
+                }
+            })
+        });
+
+        $('#btnSpecialReminderEmployees').click(function () {
+            $("#formSpecialActivityReminderEmployees").ajaxSubmit({
+                beforeSubmit: function () {
+                    $("#waitingSpecialEmployeeReminder").toggle("slow");
+                },
+                url: "/Transaction/SendSpecialMail",
+                type: "POST",
+                success: function (result) {
+                    $("#waitingSpecialEmployeeReminder").toggle("slow");
+                    if (result.status)
+                        showAlertSuccess("Mail Gönderilmiştir..");
+                    else
+                        showAlert2(result.error);
+                }
+            })
+        });
+
+        $('#btnReminderAdmins').click(function () {
+            $("#formActivityReminderAdmins").ajaxSubmit({
+                beforeSubmit: function () {
+                    $("#waitingAdminReminder").toggle("slow");
+                },
+                url: "/Transaction/sendMailAll",
+                type: "POST",
+                success: function (result) {
+                    $("#waitingAdminReminder").toggle("slow");
+                    if (result.status)
+                        showAlertSuccess("Mail Gönderilmiştir..");
+                    else
+                        showAlert2(result.error);
+                }
+            })
+        });
+
+        $('#btnSpecialReminderAdmins').click(function () {
+            $("#formSpecialActivityReminderAdmins").ajaxSubmit({
+                beforeSubmit: function () {
+                    $("#waitingSpecialAdminReminder").toggle("slow");
+                },
+                url: "/Transaction/SendSpecialMail",
+                type: "POST",
+                success: function (result) {
+                    $("#waitingSpecialAdminReminder").toggle("slow");
+                    if (result.status)
+                        showAlertSuccess("Mail Gönderilmiştir..");
+                    else
+                        showAlert2(result.error);
+                }
+            })
+        });
+
+        $('#btnSendMailProject').click(function () {
+            $("#sendMailProject").ajaxSubmit({
+                beforeSubmit: function () {
+                    $("#waitingProject").toggle("slow");
+                },
+                url: "/Transaction/SendSpecialMailProject",
+                type: "POST",
+                success: function (result) {
+                    $("#waitingProject").toggle("slow");
+                    if (result.status)
+                        showAlertSuccess("Mail Gönderilmiştir..");
+                    else
+                        showAlert2(result.error);
+                }
+            })
+        });
+
+        $('#btnSendMailCustomers').click(function () {
+            $("#formSendMailCustomers").ajaxSubmit({
+                beforeSubmit: function () {
+                    $("#waitingCustomer").toggle("slow");
+                },
+                url: "/Transaction/SendMailCustomer",
+                type: "POST",
+                success: function (result) {
+                    $("#waitingCustomer").toggle("slow");
+                    if (result.status)
+                        showAlertSuccess("Mail Gönderilmiştir..");
+                    else
+                        showAlert2(result.error);
+                }
+            })
+        });
+
+        $('input:radio[name="isInput"]').change(function () {
+            if ($(this).val() == 'false') {
+                $("#selectAllEmployee").attr("disabled", true);
+            }
+            else {
+                $("#selectAllEmployee").attr("disabled", false);
+            }
+        });
+    </script>
+}

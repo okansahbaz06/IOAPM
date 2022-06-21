@@ -1,0 +1,90 @@
+﻿@model APM.Repository.Dto.UserDto
+@{
+	Layout = "/Views/Shared/LoginLayout.cshtml";
+	ViewData["Title"] = "Giriş";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+	Url.Action("Index", "Home");
+}
+else
+{
+	<form id="loginForm" role="form" asp-action="LoginUser" class="sign-in-form">
+		<h2 class="title">Giriş Yap</h2>
+		<div class="input-field">
+			<i class="fas fa-user"></i>
+			<input type="email" id="email" name="EMAIL" required="" data-parsley-type="email" placeholder="Mail Adresi" />
+		</div>
+		<div class="input-field">
+			<i class="fas fa-lock"></i>
+			<input type="password" id="password" name="PASSWORD" required="" data-parsley-type="email" placeholder="Sifre" />
+		</div>
+		<div class="form-group">
+			<label class="custom-control custom-checkbox">
+				<input class="custom-control-input" type="checkbox"><span class="custom-control-label">Beni Hatırla</span>
+			</label>
+		</div>
+		<button type="button" id="BtnLogin" class="btn solid">Giris Yap</button>
+
+
+		<p class="social-text">Sosyal Medya</p>
+		<div class="social-media">
+			<a href="#" class="social-icon">
+				<i class="fab fa-facebook-f"></i>
+			</a>
+			<a href="#" class="social-icon">
+				<i class="fab fa-twitter"></i>
+			</a>
+			<a href="#" class="social-icon">
+				<i class="fab fa-google"></i>
+			</a>
+			<a href="#" class="social-icon">
+				<i class="fab fa-linkedin-in"></i>
+			</a>
+		</div>
+	</form>
+}
+
+
+
+
+
+@section scripts{
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+	<script src="https://malsup.github.io/jquery.form.js"></script>
+	<script>
+        $("#password").keyup(function (e) {
+            if (e.keyCode == 13) {
+                login();
+            }
+        });
+        $("#email").keyup(function (e) {
+            if (e.keyCode == 13) {
+                login();
+            }
+        });
+
+        $("#BtnLogin").click(function () {
+            login();
+        });
+
+        function login() {
+            $("#loginForm").ajaxSubmit({
+                beforeSubmit: function () {
+                   // $("#waiting").toggle("slow");
+                },
+                url: '/Login/LoginUser',
+                type: 'post',
+                success: function (result) {
+                    //$("#waiting").toggle("slow");
+                    if (result.status)
+                        window.location.href = '/Home/Index';
+                    else
+                        showAlert();
+
+                }
+            });
+        };
+	</script>
+}

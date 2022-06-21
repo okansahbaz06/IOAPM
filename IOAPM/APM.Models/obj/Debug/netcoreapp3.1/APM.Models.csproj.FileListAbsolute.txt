@@ -1,0 +1,12 @@
+C:\Users\Cosmos\source\repos\APM\APM.Models\bin\Debug\netcoreapp3.1\APM.Models.deps.json
+C:\Users\Cosmos\source\repos\APM\APM.Models\bin\Debug\netcoreapp3.1\APM.Models.dll
+C:\Users\Cosmos\source\repos\APM\APM.Models\bin\Debug\netcoreapp3.1\APM.Models.pdb
+C:\Users\Cosmos\source\repos\APM\APM.Models\obj\Debug\netcoreapp3.1\APM.Models.AssemblyInfoInputs.cache
+C:\Users\Cosmos\source\repos\APM\APM.Models\obj\Debug\netcoreapp3.1\APM.Models.AssemblyInfo.cs
+C:\Users\Cosmos\source\repos\APM\APM.Models\obj\Debug\netcoreapp3.1\APM.Models.csproj.CoreCompileInputs.cache
+C:\Users\Cosmos\source\repos\APM\APM.Models\obj\Debug\netcoreapp3.1\APM.Models.dll
+C:\Users\Cosmos\source\repos\APM\APM.Models\obj\Debug\netcoreapp3.1\APM.Models.pdb
+C:\Users\Cosmos\source\repos\APM\APM.Models\bin\Debug\netcoreapp3.1\APM.Entities.dll
+C:\Users\Cosmos\source\repos\APM\APM.Models\bin\Debug\netcoreapp3.1\APM.Entities.pdb
+C:\Users\Cosmos\source\repos\APM\APM.Models\obj\Debug\netcoreapp3.1\APM.Models.csprojAssemblyReference.cache
+C:\Users\Cosmos\source\repos\APM\APM.Models\obj\Debug\netcoreapp3.1\APM.Models.csproj.CopyComplete

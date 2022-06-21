@@ -1,0 +1,73 @@
+﻿@model APM.Repository.Dto.ProjectAllDto
+@{
+	ViewData["Title"] = "Projelerim";
+}
+
+<div class="ecommerce-widget">
+	<div class="row" style="justify-content: center;">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="page-header">
+				<h2 class="pageheader-title">Projelerim</h2>
+			</div>
+		</div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="card">
+				<h5 class="card-header">Proje Bilgileri</h5>
+				<div class="text-center">
+					<div class="card-body p-0">
+						<div class="table-responsive">
+							<div class="table-hover">
+								<table class="table table-striped table-bordered first" id="tb">
+									<thead class="bg-light">
+										<tr class="border-0">
+											<th class="border-0">#</th>
+											<th class="border-0">Ad</th>
+											<th class="border-0">Tipi</th>
+											<th class="border-0">Müsterisi</th>
+											<th class="border-0">Durum</th>
+											<th class="border-0">Seviye</th>
+											<th class="border-0">Oluşturan</th>
+											<th class="border-0">Pln. Baş. Tarihi</th>
+											<th class="border-0">Pln. Btş. Tarihi</th>
+											<th class="border-0">Başlama Tarihi</th>
+											<th class="border-0">Bitiş Tarihi</th>
+											<th class="border-0">Oluşturma Tarihi</th>
+											<th class="border-0">Oluşturma Saati</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var item in Model.ProjectDto)
+										{
+											<tr>
+												<td id="@item.ID">@item.ID </td>
+												<td id="@item.ID-name">@item.NAME</td>
+												<td id="@item.ID-type" data-id="@item.PROJECT_TYPE_.ID">@item.PROJECT_TYPE_.TYPE_NAME</td>
+												<td id="@item.ID-customer" data-id="@item.CUSTOMER.ID">@item.CUSTOMER.CUSTOMER_NAME</td>
+												@if (item.STATUS == true)
+												{
+													<td id="@item.ID-status">Aktif</td>
+												}
+												@if (item.STATUS == false)
+												{
+													<td id="@item.ID-status">Pasif</td>
+												}
+												<td id="@item.ID-level" data-id="@item.LEVEL.ID">@item.LEVEL.LEVEL_NAME</td>
+												<td id="@item.ID-creator" data-id="@item.CREATED_EMPLOYEE.ID">@item.CREATED_EMPLOYEE.EMPLOYEE_NAME @item.CREATED_EMPLOYEE.EMPLOYEE_SURNAME</td>
+												<td id="@item.ID-estStart">@item.EST_START_DATE.ToString("dd/MM/yyyy")</td>
+												<td id="@item.ID-estEnd">@item.EST_END_DATE.ToString("dd/MM/yyyy")</td>
+												<td id="@item.ID-start">@item.START_DATE?.ToString("dd/MM/yyyy")</td>
+												<td id="@item.ID-end">@item.END_DATE?.ToString("dd/MM/yyyy")</td>
+												<td>@item.CREATED_DATE.ToString("dd/MM/yyyy")</td>
+												<td>@item.CREATED_TIME.ToString("hh':'mm':'ss")</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

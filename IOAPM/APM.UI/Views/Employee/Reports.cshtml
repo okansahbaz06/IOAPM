@@ -1,0 +1,428 @@
+﻿<style>
+    .table th {
+        font-weight: bold;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+        padding: 5px !important;
+        text-align: center;
+    }
+
+    #progress {
+        border: 1px solid black;
+        position: relative;
+        padding: 3px;
+        margin-right: 30px;
+    }
+
+    #percent {
+        position: absolute;
+        left: 50%;
+        font-family: "Myriad Pro";
+        font-weight: bold;
+    }
+
+    #bar {
+        display: none;
+        height: 20px;
+        background-color: green;
+        width: 0%;
+        opacity: 0.1;
+    }
+</style>
+
+@model APM.Repository.Dto.EmployeeReportsDto
+@using System.Globalization;
+@{
+    int waitingWhour, totalWaitingWhour = 0, filterMonth = (int)ViewData["month"], filterYear = (int)ViewData["year"];
+    int? isNow;
+    double totalWhour = 0, diffWhour = 0, totalProjectWhour = 0;
+    string invoice, holidaySummary = null, currentMonth = CultureInfo.GetCultureInfo("tr-TR").DateTimeFormat.MonthNames[filterMonth - 1];
+
+    if (filterMonth == DateTime.Now.Month && filterYear == DateTime.Now.Year)
+        isNow = DateTime.Now.Day;
+    else
+        isNow = DateTime.DaysInMonth(filterYear, filterMonth);
+
+    if (Model.Invoice == null)
+        invoice = "null";
+    else
+        invoice = Model.Invoice.ToString().ToLower();
+}
+@functions{
+    string twoDigit(int n)
+    {
+        return (n > 9 ? "" + n : "0" + n);
+    }
+    TimeSpan DecimalToTimeSpan(double dec)
+    {
+        var hour = (int)Math.Truncate(dec);
+        var min = (int)Math.Round(((dec) * 60) % 60);
+
+        return new TimeSpan(hour, min, 0);
+    }
+    string DecimalToTime(double dec)
+    {
+        var hour = (int)Math.Truncate(dec);
+        var min = (int)Math.Round(((dec) * 60) % 60);
+
+        return (twoDigit(hour) + ":" + twoDigit(min));
+    }
+    string getDiff(double wh, int waitingWh)
+    {
+        var time = DecimalToTimeSpan(wh);
+        var waiting = new TimeSpan(waitingWh, 0, 0);
+        var timeDiff = time - waiting;
+        return string.Format("{0:00}:{1:00}", Math.Truncate(timeDiff.TotalHours), timeDiff.Minutes);
+    }
+}
+
+@{
+    ViewData["Title"] = "Çalışan Raporları";
+}
+
+
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="page-header">
+            <h2 class="pageheader-title">Çalısanların Raporları</h2>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            @if (Model.SelectedEmployee == null)
+            {
+                <h5 class="card-header"><i class="fas fa-file-medical-alt" style="margin-right: 10px;"></i>Çalışan Seçiniz..</h5>
+            }
+            else
+            {
+                <h5 class="card-header text-danger">
+                    <i class="fas fa-file-medical-alt"></i>
+                    @foreach (var item in Model.SelectedEmployee)
+                    {
+                        <i> @item.NAME @item.SURNAME - </i>
+                    }
+                    Adlı Çalışan Raporları..
+                </h5>
+            }
+            <form asp-action="Reports">
+                <div class="row justify-content-md-center bg-white rounded shadow border border-secondary m-4 p-3">
+                    <div class="col-12 col-sm-3 col-lg-3">
+                        <span class="ml-2">Çalışan Ad Soyadı:</span>
+                        <select id="employeeId" class="selectpicker" data-width="100%" data-live-search="true" multiple data-actions-box="true" name="id">
+                            @foreach (var item in Model.Employees)
+                            {
+                                if (Model.SelectedEmployee != null)
+                                {
+                                    if (Model.SelectedEmployee.Select(e => e.ID).Contains(item.ID))
+                                    {
+                                        <option value="@item.ID" selected>@item.NAME @item.SURNAME</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.ID">@item.NAME @item.SURNAME</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="@item.ID">@item.NAME @item.SURNAME</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-2 col-lg-2">
+                        Ay:
+                        <select class="form-select" id="filterMonth" name="month">
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                if (i == filterMonth)
+                                {
+                                    <option value="@i" selected>@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-2 col-lg-2">
+                        Yıl:
+                        <select class="form-select" id="filterYear" name="year">
+                            <option value="2020">2020</option>
+                            <option value="2021" selected>2021</option>
+                            <option value="2022">2022</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-2 col-lg-2">
+                        Fatura:
+                        <select class="form-select" id="invoice" name="invoice">
+                            <option value="null" selected>Hepsi</option>
+                            <option value="true">Evet</option>
+                            <option value="false">Hayır</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-3 col-lg-3">
+                        Proje:
+                        <select class="selectpicker" data-width="100%" data-live-search="true" multiple data-actions-box="true" id="projectId" name="projectId">
+                            @foreach (var item in Model.Projects)
+                            {
+                                if (Model.SelectedProjectId != null)
+                                {
+                                    if (Model.SelectedProjectId.Contains(item.ID))
+                                    {
+                                        <option value="@item.ID" selected>@item.NAME - @item.CUSTOMER.CUSTOMER_NAME</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.ID">@item.NAME - @item.CUSTOMER.CUSTOMER_NAME</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="@item.ID">@item.NAME - @item.CUSTOMER.CUSTOMER_NAME</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mt-3 col-12 col-sm-2 col-lg-1">
+                        <button type="submit" class="btn btn-outline-secondary" data-toggle="modal" data-target="#create" style="margin-left:20px;" id="btnGetReports">Raporları Getir</button>
+                    </div>
+                </div>
+            </form>
+            <div>
+                <div class="card-body p-0">
+                    @if (Model.SelectedEmployee != null)
+                    {
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h2 class="pageheader-title ml-3">Müşteri & Proje Bazlı Rapor</h2><hr>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="justify-content: center;">
+                            <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="card text-white bg-secondary mb-3">
+                                    <div class="row">
+                                        <div class="col-xl-8">
+                                            <h5 class="card-header bg-secondary"><i class="fas fa-file-medical-alt" style="margin-right: 10px;"></i> @currentMonth @filterYear - Müşteri & Proje Bazlı Efor Özeti</h5>
+                                        </div>
+                                        <div class="col-xl-4" style="align-self: center;padding-right: 25px;">
+                                            <button type="button" tableexport-id="f444028-xlsx" class="btn btn-light" style="float: right;"><i class="mr-1 fas fa-file-excel text-success"></i>Dışa Aktar</button>
+                                        </div>
+                                    </div>
+                                    <div class="text-center table-responsive">
+                                        <div class="card-body p-0">
+                                            <div class="table-hover">
+                                                <table class="table table-striped first" id="tb2">
+                                                    <thead class="bg-light">
+                                                        <tr class="border-0">
+                                                            <th class="border-0">Çalışan</th>
+                                                            <th class="border-0">Müşteri</th>
+                                                            <th class="border-0">Proje</th>
+                                                            <th class="border-0">Çalışma Saati<i style="font-weight: normal;"> (Saat:Dakika)</i></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{ int i2 = 0;}
+                                                        @foreach (var e in Model.SelectedEmployee)
+                                                        {
+                                                            foreach (var p in e.SumProjectWhour)
+                                                            {
+                                                                <tr>
+                                                                    <td class="tableexport-string">@e.NAME @e.SURNAME</td>
+                                                                    <td class="tableexport-string">@p.Customer_Name</td>
+                                                                    <td class="tableexport-string">@p.NAME</td>
+                                                                    <td class="tableexport-string">@DecimalToTime(p.SumWhour)</td>
+                                                                </tr>
+                                                                totalProjectWhour += p.SumWhour;
+                                                                i2++;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                    <tfoot class="bg-dark text-white">
+                                                        <tr>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td class="text-right font-weight-bold">Toplam :</td>
+                                                            <td class="font-weight-bold tableexport-string">@DecimalToTime(totalProjectWhour)</td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h2 class="pageheader-title ml-3">Çalışma Saati Raporu</h2><hr>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="justify-content: center;">
+                            <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="card text-white bg-secondary mb-3">
+                                    <div class="row">
+                                        <div class="col-xl-8">
+                                            <h5 class="card-header bg-secondary"><i class="fas fa-file-medical-alt" style="margin-right: 10px;"></i> @currentMonth @filterYear - Günlük Aktiviteler </h5>
+                                        </div>
+                                        <div class="col-xl-4" style="align-self: center;padding-right: 25px;">
+                                            <button type="button" tableexport-id="a70aea2-xlsx" class="btn btn-light" style="float: right;"><i class="mr-1 fas fa-file-excel text-success"></i>Dışa Aktar</button>
+                                        </div>
+                                    </div>
+                                    <div class="text-center table-responsive">
+                                        <div class="card-body p-0">
+                                            <div class="table-hover">
+                                                <table class="table table-striped first" id="tb">
+                                                    <thead class="bg-light">
+                                                        <tr class="border-0">
+                                                            <th class="border-0">Tarih</th>
+                                                            <th class="border-0">Gün</th>
+                                                            <th class="border-0">Çalışma Saati<i style="font-weight: normal;"> (Saat:Dakika)</i></th>
+                                                            <th class="border-0">Beklenen<i style="font-weight: normal;"> (Saat)</i></th>
+                                                            <th class="border-0">Fazla/Eksik<i style="font-weight: normal;"> (Saat:Dakika)</i></th>
+                                                            <th class="border-0"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @for (int i = 0; i < isNow; i++)
+                                                        {
+                                                            double dayTotalWhour = 0;
+                                                            DateTime date = new DateTime(filterYear, filterMonth, i + 1);
+                                                            string currentDayTR = CultureInfo.GetCultureInfo("tr-TR").DateTimeFormat.DayNames[(int)date.DayOfWeek];
+                                                            holidaySummary = Model.DaysSummary[i];
+                                                            if ((date.DayOfWeek == DayOfWeek.Saturday) || (date.DayOfWeek == DayOfWeek.Sunday) || holidaySummary != null)
+                                                            {
+                                                                waitingWhour = (0 * Model.SelectedEmployee.Count());
+                                                                if (holidaySummary != null)
+                                                                    holidaySummary = "(" + holidaySummary + ")";
+                                                            }
+                                                            else
+                                                                waitingWhour = (8 * Model.SelectedEmployee.Count());
+
+                                                            foreach (var item in Model.SelectedEmployee)
+                                                            {
+                                                                dayTotalWhour += item.SumWhour[i];
+                                                            }
+
+                                                            totalWaitingWhour += waitingWhour;
+                                                            totalWhour += dayTotalWhour;
+                                                            diffWhour += dayTotalWhour - waitingWhour;
+
+                                                            string whourStatus = "bg-info-light text-dark", whourStatusIcon = "fas fas fa-check-circle fa-sm text-info";
+
+                                                            if (waitingWhour == 0)
+                                                            {
+                                                                whourStatus = "bg-light text-dark";
+                                                                whourStatusIcon = "fas fa-minus-circle fa-sm text-secondary";
+                                                            }
+                                                            else if ((dayTotalWhour - waitingWhour) < 0)
+                                                            {
+                                                                whourStatus = "bg-danger-light text-dark";
+                                                                whourStatusIcon = "fas fa-arrow-circle-down fa-sm text-danger";
+                                                            }
+                                                            else if ((dayTotalWhour - waitingWhour) > 0)
+                                                            {
+                                                                whourStatus = "bg-success-light text-dark";
+                                                                whourStatusIcon = "fas fa-arrow-circle-up fa-sm text-success";
+                                                            }
+
+                                                            <tr class="@whourStatus">
+                                                                <td class="tableexport-string">@(i + 1).@(date.Month).@(date.Year) @holidaySummary</td>
+                                                                <td class="tableexport-string">@currentDayTR</td>
+                                                                <td class="tableexport-string">@DecimalToTime(dayTotalWhour)</td>
+                                                                <td class="tableexport-string">@waitingWhour</td>
+                                                                <td class="tableexport-string">@getDiff(dayTotalWhour, waitingWhour)</td>
+                                                                <td><i class="@whourStatusIcon"></i></td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                    <tfoot class="bg-dark text-white">
+                                                        <tr>
+                                                            <td></td>
+                                                            <td class="text-right font-weight-bold">Toplam :</td>
+                                                            <td class="font-weight-bold tableexport-string">@DecimalToTime(totalWhour)</td>
+                                                            <td class="font-weight-bold tableexport-string">@DecimalToTime(totalWaitingWhour)</td>
+                                                            <td class="font-weight-bold tableexport-string">@getDiff(totalWhour, totalWaitingWhour)</td>
+                                                            @if (diffWhour < 0)
+                                                            {
+                                                                <td><i class="fas fa-arrow-circle-down fa-sm text-danger"></i></td>
+                                                            }
+                                                            else if (diffWhour > 0)
+                                                            {
+                                                                <td><i class="fas fa-arrow-circle-up fa-sm text-success"></i></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td><i class="fas fas fa-check-circle fa-sm text-info"></i></td>
+                                                            }
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script>
+
+        $('.selectpicker').selectpicker({
+            noneSelectedText: 'Seçim Yapılmadı',
+            selectAllText: 'Tümü',
+            deselectAllText: 'Hiçbiri',
+            size: 'auto',
+
+        });
+
+
+        $(window).on('load', function () {
+            $('#invoice').val('@invoice');
+
+        });
+        var exportDate = new Date();
+        var tableeexport = $('#tb').tableExport({
+            headers: true,
+            footers: true,
+            formats: ["xlsx"],
+            filename: "Aylık Aktivite Raporum " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear(),
+            bootstrap: true,
+            exportButtons: false,
+            position: "top",
+            ignoreRows: null,
+            ignoreCols: [5],
+            trimWhitespace: true,
+            RTL: true,
+            sheetname: "Raporum " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear()
+        });
+        var tableeexport = $('#tb2').tableExport({
+            headers: true,
+            footers: true,
+            formats: ["xlsx"],
+            filename: "Proje & Müşteri Raporum " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear(),
+            bootstrap: true,
+            exportButtons: false,
+            position: "top",
+            ignoreRows: null,
+            ignoreCols: null,
+            trimWhitespace: true,
+            RTL: true,
+            sheetname: "Raporum " + exportDate.getDate() + "." + (exportDate.getMonth() + 1) + "." + exportDate.getFullYear()
+        });
+
+    </script>
+}

@@ -1,0 +1,536 @@
+﻿<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords"
+          content="" />
+    <meta name="description"
+          content="" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>APM</title>
+
+    <link rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="../assets/images/favicon.png" />
+
+    <link href="~/dist/css/style.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/flot/css/float-chart.css" rel="stylesheet" />
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="~/assets/vendor/datatables/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/libs/css/style.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+    <link rel="stylesheet" href="~/assets/vendor/charts/morris-bundle/morris.css">
+    <link href="~/assets/vendor/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/vendor/datepicker/tempusdominus-bootstrap-4.css">
+
+
+    <style>
+        .alertmessage {
+            position: fixed;
+            top: 100%;
+            left: 50%;
+            width: 400px;
+            margin-left: -200px;
+            margin-top: -150px;
+            text-align: center;
+            outline: 9999px solid rgba(0,0,0,0.2);
+            display: none;
+            z-index: 999999;
+            border-radius: 0px;
+        }
+
+        .btndisplaymenu {
+            position: fixed;
+            background-color: #0e0c27;
+            margin-top: 90px;
+            padding-right: 5px;
+            margin-left: -10px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            border-radius: 0px 10px 10px 0px;
+        }
+
+        #sidebarMenu {
+            margin-left: -264px;
+        }
+
+        #renderbody {
+            margin-left: 0px;
+        }
+    </style>
+
+
+</head>
+
+<body>
+	<div class="alert alert-danger alertmessage" id="danger-alert2">
+		<strong>Hata ! </strong><br /><p id="errorMsg"></p>
+	</div>
+
+	<div class="alert alert-danger alertmessage" id="danger-alert">
+		<strong>Hata ! </strong><br /> Yanlış giden bir şeyler var. Kontrol ederek tekrar deneyiniz..
+	</div>
+
+	<div class="alert alert-success alertmessage" id="success-alert">
+		<strong>Başarılı !  </strong><br /><p id="successMsg"></p>
+	</div>
+
+	<div class="alert alert-success alertmessage" id="create-success-alert">
+		<strong>Başarılı !  </strong><br /> Başarıyla eklendi.<br /><span class="dashboard-spinner spinner-secondary spinner-xs"></span>
+	</div>
+
+	<div class="alert alert-success alertmessage" id="edit-succes-alert">
+		<strong>Başarılı ! </strong><br /> Başarıyla düzenlendi.<br /><span class="dashboard-spinner spinner-secondary spinner-xs"></span>
+	</div>
+
+	<div class="preloader">
+		<div class="lds-ripple">
+			<div class="lds-pos"></div>
+			<div class="lds-pos"></div>
+		</div>
+	</div>
+	<div id="main-wrapper"
+		 data-layout="vertical"
+		 data-navbarbg="skin5"
+		 data-sidebartype="full"
+		 data-sidebar-position="absolute"
+		 data-header-position="absolute"
+		 data-boxed-layout="full">
+
+		<header class="topbar" data-navbarbg="skin5">
+			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
+				<div class="navbar-header" data-logobg="skin5">
+
+					<a class="navbar-brand" href="\Home\Index">
+
+						<b class="logo-icon ps-2">
+
+							<img src="../assets/images/logo-icon.png"
+								 alt="homepage"
+								 class="light-logo"
+								 width="50"
+								 style="margin-left:-9px" />
+						</b>
+
+						<span class="logo-text ms-2">
+
+							<img src="../assets/images/logo-text.png"
+								 alt="homepage"
+								 class="light-logo" />
+						</span>
+					</a>
+
+					<a class="nav-toggler waves-effect waves-light d-block d-md-none"
+					   href="javascript:void(0)">
+						<i class="ti-menu ti-close"></i>
+					</a>
+				</div>
+
+				<div class="navbar-collapse collapse"
+					 id="navbarSupportedContent"
+					 data-navbarbg="skin5">
+
+					<ul class="navbar-nav float-start me-auto">
+						<li class="nav-item d-none d-lg-block">
+							<a class="nav-link sidebartoggler waves-effect waves-light"
+							   href="javascript:void(0)"
+							   data-sidebartype="mini-sidebar">
+								<i class="mdi mdi-menu font-24"></i>
+							</a>
+						</li>
+
+
+
+					</ul>
+
+					<ul class="navbar-nav float-end">
+
+
+
+
+						<li class="nav-item dropdown">
+							<a class="
+                    nav-link
+                    dropdown-toggle
+                    text-muted
+                    waves-effect waves-dark
+                    pro-pic
+                  "
+							   href="#"
+							   id="navbarDropdown"
+							   role="button"
+							   data-bs-toggle="dropdown"
+							   aria-expanded="false">
+								Hoşgeldiniz ! @User.Identity.Name
+								<img src="../assets/images/users/1.jpg"
+									 alt="user"
+									 class="rounded-circle"
+									 width="35" />
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end user-dd animated"
+								aria-labelledby="navbarDropdown">
+								<a class="dropdown-item" asp-controller="Dashboard" asp-action="Index"><i class="mdi mdi-account me-1 ms-1"></i> Hesap</a>
+
+								<a class="dropdown-item" asp-controller="LogIn" asp-action="LogOff"><i class="fa fa-power-off me-1 ms-1"></i> Çıkış Yap</a>
+
+							</ul>
+						</li>
+
+					</ul>
+				</div>
+			</nav>
+		</header>
+		<aside class="left-sidebar" data-sidebarbg="skin5">
+
+			<div class="scroll-sidebar">
+
+				<nav class="sidebar-nav">
+					@if (User.Identity.HavePermission(Roles.ADMIN))
+					{
+
+                    <ul id="sidebarnav" class="pt-4">
+                        <li class="sidebar-item" title="Anasayfa">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                               asp-controller="Home" asp-action="Index"
+                               aria-expanded="false">
+                                <i class="mdi mdi-home-outline"></i><span class="hide-menu">Anasayfa</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" title="Aktivite İşlemleri">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                               asp-controller="Activity" asp-action="Index"
+                               aria-expanded="false">
+                                <i class="mdi mdi-chart-bar"></i><span class="hide-menu">Aktivite İşlemleri</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item" title="E-Mail">
+                            <a asp-controller="Transaction" asp-action="SendMail" class="sidebar-link">
+                                <i class="mdi mdi-email-outline"></i><span class="hide-menu"> Toplu E-Mail Yönetimi </span>
+                            </a>
+                        </li>
+
+
+                        <li class="sidebar-item" title="Proje İşlemleri">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                               asp-controller="Project" asp-action="Index"
+                               aria-expanded="false">
+                                <i class="mdi mdi-blur-linear"></i><span class="hide-menu">Proje İşlemleri</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item" title="Müşteriler">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark" 
+							   href="javascript:void(0)"
+                               aria-expanded="false">
+                                <i class="fas fa-handshake"></i><span class="hide-menu">Müşteriler </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse first-level">
+                                <li class="sidebar-item">
+                                    <a  asp-controller="Customer" asp-action="Index" class="sidebar-link"  >
+                                        <i class="fas fa-hands-helping"></i><span class="hide-menu"> Müşteri İşlemleri </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item" title="Sabitleri Belirle">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark"
+                               href="javascript:void(0)"
+                               aria-expanded="false">
+                                <i class="mdi mdi-move-resize-variant"></i><span class="hide-menu">Sabitleri Belirle</span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse first-level">
+                                <li class="sidebar-item">
+                                    <a  asp-controller="Title" asp-action="Index" class="sidebar-link">
+                                        <i class="mdi mdi-view-dashboard"></i><span class="hide-menu"> Ünvanlar</span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a  asp-controller="Priority" asp-action="Index" class="sidebar-link">
+                                        <i class="mdi mdi-multiplication-box"></i><span class="hide-menu"> Öncelik Seviyeleri</span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Level" asp-action="Index"  class="sidebar-link">
+                                        <i class="mdi mdi-calendar-check"></i><span class="hide-menu"> Proje Seviyeleri </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="ProjectType" asp-action="Index" class="sidebar-link">
+                                        <i class="mdi mdi-bulletin-board"></i><span class="hide-menu"> Proje Tipleri</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="sidebar-item" title="Duyurular">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                               asp-controller="Notification" asp-action="Index"
+                               aria-expanded="false">
+                                <i class="mdi mdi-message-outline"></i><span class="hide-menu">Duyurular</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" title="Çalışanlar">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark"
+                               href="javascript:void(0)"
+                               aria-expanded="false">
+                                <i class="mdi mdi-account"></i><span class="hide-menu">Çalışanlar </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Employee" asp-action="Index" class="sidebar-link">
+                                        <i class="fas fa-address-card"></i><span class="hide-menu"> Çalışan İşlemleri </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Employee" asp-action="Reports" class="sidebar-link">
+                                        <i class="fas fa-address-card"></i><span class="hide-menu"> Çalışan Raporları </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-item"><span style="color: #fff; margin-left: 70px;" class="hide-menu">  <b>KİŞİSEL MENÜ</b></span> </li>
+
+                        <li class="sidebar-item" title="Projelerim">
+                            <a asp-controller="Project" asp-action="MyProject" class="sidebar-link">
+                                <i class="fas fa-briefcase"></i><span class="hide-menu"> Projelerim </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" title="Aktivitelerim">
+                            <a asp-controller="Activity" asp-action="MyActivity" class="sidebar-link">
+                                <i class=" fas fa-clipboard-list"></i><span class="hide-menu"> Aktivitelerim </span>
+                            </a>
+                        </li>
+
+                    </ul>
+
+					}
+					else
+					{
+
+
+						<ul id="sidebarnav" class="pt-4">
+							<li class="sidebar-item" title="Anasayfa">
+								<a class="sidebar-link waves-effect waves-dark sidebar-link"
+								   asp-controller="Home" asp-action="Index"
+								   aria-expanded="false">
+									<i class="mdi mdi-home-outline"></i><span class="hide-menu">Anasayfa</span>
+								</a>
+							</li>
+							<li class="sidebar-item" title="Projelerim">
+								<a asp-controller="Project" asp-action="MyProject" class="sidebar-link">
+									<i class="fas fa-briefcase"></i><span class="hide-menu"> Projelerim </span>
+								</a>
+							</li>
+							<li class="sidebar-item" title="Aktivitelerim">
+								<a asp-controller="Activity" asp-action="MyActivity" class="sidebar-link">
+									<i class=" fas fa-clipboard-list"></i><span class="hide-menu"> Aktivitelerim </span>
+								</a>
+							</li>
+
+						</ul>
+					}
+
+				</nav>
+
+			</div>
+
+		</aside>
+
+
+		<div class="page-wrapper">
+
+			<div class="page-breadcrumb">
+				<div class="row">
+					<div class="col-12 d-flex no-block align-items-center">
+
+
+					</div>
+				</div>
+			</div>
+			<div class="container-fluid">
+
+				<div class="row">
+					@RenderBody()
+				</div>
+
+			</div>
+
+			<footer class="footer text-center">
+			</footer>
+
+		</div>
+
+	</div>
+	<script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+	<script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="../assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="../assets/extra-libs/sparkline/sparkline.js"></script>
+	<script src="../dist/js/waves.js"></script>
+	<script src="../dist/js/sidebarmenu.js"></script>
+	<script src="../dist/js/custom.min.js"></script>
+	<script src="../assets/libs/flot/excanvas.js"></script>
+	<script src="../assets/libs/flot/jquery.flot.js"></script>
+	<script src="../assets/libs/flot/jquery.flot.pie.js"></script>
+	<script src="../assets/libs/flot/jquery.flot.time.js"></script>
+	<script src="../assets/libs/flot/jquery.flot.stack.js"></script>
+	<script src="../assets/libs/flot/jquery.flot.crosshair.js"></script>
+	<script src="../assets/libs/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
+	<script src="../dist/js/pages/chart/chart-page-init.js"></script>
+	<script src="~/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+	<script src="~/assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+	<script src="~/assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+	<script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+	<script src="~/assets/vendor/charts/c3charts/c3.min.js"></script>
+	<script src="~/assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+	<script src="~/assets/vendor/charts/c3charts/C3chartjs.js"></script>
+	<script src="~/assets/vendor/datepicker/moment.js"></script>
+	<script src="~/assets/vendor/bootstrap-select/js/bootstrap-select.js"></script>
+	<script src="~/assets/vendor/datepicker/tempusdominus-bootstrap-4.js"></script>
+	<script src="~/assets/vendor/datepicker/datepicker.js"></script>
+	<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+	<script src="~/assets/vendor/inputmask/js/jquery.inputmask.bundle.js"></script>
+	<script src="~/assets/vendor/tableexport/FileSaver.js"></script>
+	<script src="~/assets/vendor/tableexport/Blob.js"></script>
+	<script src="~/assets/vendor/tableexport/Export2Excel.js"></script>
+	<script src="~/assets/vendor/tableexport/xlsx.core.min.js"></script>
+	<script src="~/assets/vendor/tableexport/tableexport.js"></script>
+	<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+	<script src="~/assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
+
+	<script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+
+	<script src="https://malsup.github.io/jquery.form.js"></script>
+
+	@RenderSection("Scripts", false)
+
+</body>
+</html>
+
+
+<script>
+
+
+	$(document).ajaxError(function (xhr, result) {
+		if (result.status === 403) {
+			window.location.href = '/Home/Index';
+		}
+		if (result.status === 401) {
+			window.location.href = '/LogIn/NotFound404';
+		}
+	});
+
+
+	$(document).ready(function () {
+		var menuList = "menuList";
+		menuList = $.trim(menuList);
+		var windowWidth = $(window).width();
+		if (windowWidth > 600) {
+			if (menuList == "") {
+				$("#sidebarMenu").animate({ "margin-left": "0px" }, { queue: false });
+				$(".btndisplaymenu").animate({ "margin-left": "251px" }, {
+					complete: function () {
+						$("#renderbody").animate({ "margin-left": "264px" });
+					}
+				});
+				SetSessionMenuList('menuList', 'true');
+			}
+			else if (menuList == "true") {
+				$("#sidebarMenu").animate({ "margin-left": "0px" }, { queue: false });
+				$(".btndisplaymenu").animate({ "margin-left": "251px" }, {
+					complete: function () {
+						$("#renderbody").animate({ "margin-left": "264px" })
+					}
+				});
+			}
+			else if (menuList == "false") {
+				$("#sidebarMenu").animate("margin-left", "-264px");
+				$(".btndisplayMenu").animate("margin-left", "-10px");
+				$("#renderbody").animate("margin-left", "5px");
+			}
+			$(".btndisplaymenu").click(function () {
+				if ($(this).css("margin-left") == "251px") {
+					$("#sidebarMenu").animate({ "margin-left": "-264px" }, { queue: false });
+					$(".btndisplaymenu").animate({ "margin-left": "-10px" }, {
+						complete: function () {
+							$("#renderbody").animate({ "margin-left": "5px" });
+						}
+					});
+					SetSessionMenuList('menuList', 'false');
+				}
+				else {
+					$("#renderbody").animate({ "margin-left": "264px" });
+					$(".btndisplaymenu").animate({ "margin-left": "251px" });
+					$("#sidebarMenu").animate({ "margin-left": "0px" });
+					SetSessionMenuList('menuList', 'true');
+				}
+			});
+		}
+		else {
+			$(".btndisplaymenu").css("display", "none");
+			$("#sidebarMenu").css("margin-left", "0px");
+		}
+
+
+
+
+		$("#danger-alert").hide();
+		$("#create-success-alert").hide();
+		$("#edit-success-alert").hide();
+	});
+
+	function SetSessionMenuList(key, value) {
+		$.post('/Home/SetSessionMenuList',
+			{ key: key, value: value });
+	};
+
+	function showAlert() {
+		$("#danger-alert").fadeTo(3000, 500).slideUp(500, function () {
+			$("#danger-alert").slideUp(500);
+		});
+	};
+	function showAlertSuccess(msg) {
+		document.getElementById("successMsg").innerHTML = msg;
+		$("#success-alert").fadeTo(3000, 500).slideUp(500, function () {
+			$("#success-alert").slideUp(500);
+		});
+	};
+
+	function showAlert2(msg) {
+		document.getElementById("errorMsg").innerHTML = msg;
+		$("#danger-alert2").fadeTo(3000, 500).slideUp(500, function () {
+			$("#danger-alert2").slideUp(500);
+		});
+	};
+	function showCreateAlert() {
+		$("#create-success-alert").fadeTo(2000, 500).slideUp(500, function () {
+			$("#create-success-alert").slideUp(500);
+			window.location.reload();
+		});
+	};
+	function showCreateAlert2() {
+		$("#create-success-alert").fadeTo(2000, 500).slideUp(500, function () {
+			$("#create-success-alert").slideUp(500);
+		});
+	};
+
+	function showEditAlert() {
+		$("#edit-succes-alert").fadeTo(2000, 500).slideUp(500, function () {
+			$("#edit-succes-alert").slideUp(500);
+			window.location.reload();
+		});
+	};
+
+</script>
+
